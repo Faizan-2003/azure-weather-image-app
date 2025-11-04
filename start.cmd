@@ -3,6 +3,10 @@ REM Start the Azure Functions application
 
 echo === Starting Azure Functions Application ===
 echo.
+echo Multi-Queue Architecture:
+echo   - job-start-queue: Receives job initiation messages
+echo   - image-processing-queue: Processes individual weather station images
+echo.
 
 REM Build the project
 echo Building project...

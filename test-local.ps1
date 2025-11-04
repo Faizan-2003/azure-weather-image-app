@@ -7,6 +7,12 @@ $BAD_KEY = "wrong-key"
 
 Write-Host "=== Weather Image API Tests ===" -ForegroundColor Cyan
 Write-Host ""
+Write-Host "Multi-Queue Architecture:" -ForegroundColor Gray
+Write-Host "  1. HTTP Request -> StartJobFunction -> job-start-queue" -ForegroundColor Gray
+Write-Host "  2. JobInitiatorFunction (queue trigger) -> fetches weather stations" -ForegroundColor Gray
+Write-Host "  3. Fan-out to image-processing-queue (40 messages)" -ForegroundColor Gray
+Write-Host "  4. ProcessImageFunction (40 parallel executions)" -ForegroundColor Gray
+Write-Host ""
 
 # Test 1: Unauthorized Access
 Write-Host "Test 1: Testing unauthorized access (should return 401)..." -ForegroundColor Yellow
@@ -33,6 +39,8 @@ try {
         Write-Host "  Job ID: $($response.jobId)" -ForegroundColor Cyan
         Write-Host "  Status: $($response.status)" -ForegroundColor Cyan
         Write-Host "  Message: $($response.message)" -ForegroundColor Cyan
+        Write-Host "  -> Job message sent to job-start-queue" -ForegroundColor Gray
+        Write-Host "  -> JobInitiatorFunction will process and fan out to image-processing-queue" -ForegroundColor Gray
         $JOB_ID = $response.jobId
     } else {
         Write-Host "[FAIL] Failed to start job - no jobId returned" -ForegroundColor Red
@@ -64,33 +72,68 @@ if ($JOB_ID) {
                 Write-Host "    - $($_.stationName): $($_.temperature)C, $($_.weatherDescription)" -ForegroundColor Gray
             }
         } else {
-            Write-Host "  Images Generated: 0 (processing...)" -ForegroundColor Yellow
+            Write-Host "  Images Generated: 0 (job-start-queue -> JobInitiatorFunction -> image-processing-queue)" -ForegroundColor Yellow
         }
     } catch {
         Write-Host "[FAIL] Error checking status: $($_.Exception.Message)" -ForegroundColor Red
     }
     Write-Host ""
     
-    # Test 4: Wait and Check Again
-    Write-Host "Test 4: Waiting 10 seconds and checking progress..." -ForegroundColor Yellow
-    Start-Sleep -Seconds 10
+    # Test 4: Monitor Until Completion
+    Write-Host "Test 4: Monitoring job until completion..." -ForegroundColor Yellow
+    Write-Host "  (Press Ctrl+C to stop monitoring)" -ForegroundColor Gray
+    Write-Host ""
     
-    try {
-        $statusData = Invoke-RestMethod -Uri "$API_URL/api/job/$JOB_ID" -Method GET -Headers @{"X-API-Key"=$API_KEY} -ErrorAction Stop
+    $checkCount = 0
+    $maxChecks = 60  # Maximum 3 minutes (60 checks * 3 seconds)
+    
+    do {
+        Start-Sleep -Seconds 3
+        $checkCount++
         
-        Write-Host "[PASS] Updated job status:" -ForegroundColor Green
-        Write-Host "  Status: $($statusData.status)" -ForegroundColor Cyan
-        Write-Host "  Processed: $($statusData.processedStations) / $($statusData.totalStations)" -ForegroundColor Cyan
-        Write-Host "  Images: $($statusData.images.Count)" -ForegroundColor Cyan
-        
-        if ($statusData.status -eq "Completed") {
-            Write-Host "  [SUCCESS] Job completed successfully!" -ForegroundColor Green
-        } elseif ($statusData.status -eq "InProgress" -or $statusData.status -eq "Processing") {
-            Write-Host "  [INFO] Job still processing..." -ForegroundColor Yellow
+        try {
+            $statusData = Invoke-RestMethod -Uri "$API_URL/api/job/$JOB_ID" -Method GET -Headers @{"X-API-Key"=$API_KEY} -ErrorAction Stop
+            
+            # Show progress indicator
+            $progressBar = ""
+            if ($statusData.totalStations -gt 0) {
+                $percentage = [math]::Round(($statusData.processedStations / $statusData.totalStations) * 100)
+                $progressBar = " [$percentage%]"
+            }
+            
+            Write-Host "  Check $checkCount : Status=$($statusData.status) | Processed=$($statusData.processedStations)/$($statusData.totalStations)$progressBar | Images=$($statusData.images.Count)" -ForegroundColor Cyan
+            
+            # Check if completed
+            if ($statusData.status -eq "Completed") {
+                Write-Host ""
+                Write-Host "  [SUCCESS] Job completed successfully!" -ForegroundColor Green
+                Write-Host "  Total Images Generated: $($statusData.images.Count)" -ForegroundColor Green
+                Write-Host ""
+                Write-Host "  Sample Images:" -ForegroundColor Cyan
+                $statusData.images | Select-Object -First 5 | ForEach-Object {
+                    Write-Host "    - $($_.stationName): $($_.temperature)°C, $($_.weatherDescription)" -ForegroundColor Gray
+                }
+                if ($statusData.images.Count -gt 5) {
+                    Write-Host "    ... and $($statusData.images.Count - 5) more" -ForegroundColor Gray
+                }
+                break
+            }
+            
+            # Timeout check
+            if ($checkCount -ge $maxChecks) {
+                Write-Host ""
+                Write-Host "  [TIMEOUT] Max monitoring time reached (3 minutes)" -ForegroundColor Yellow
+                Write-Host "  Job Status: $($statusData.status)" -ForegroundColor Yellow
+                Write-Host "  Progress: $($statusData.processedStations)/$($statusData.totalStations)" -ForegroundColor Yellow
+                break
+            }
+            
+        } catch {
+            Write-Host "  [ERROR] Failed to check status: $($_.Exception.Message)" -ForegroundColor Red
+            break
         }
-    } catch {
-        Write-Host "[FAIL] Error checking status: $($_.Exception.Message)" -ForegroundColor Red
-    }
+        
+    } while ($true)
 } else {
     Write-Host "[SKIP] Test 3 & 4 skipped - no job ID available" -ForegroundColor Yellow
 }

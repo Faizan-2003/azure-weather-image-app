@@ -38,36 +38,27 @@ public class StartJobFunction
             // Generate unique job ID
             var jobId = Guid.NewGuid().ToString();
 
-            // Fetch weather stations
-            var stations = await _weatherService.GetWeatherStationsAsync();
-            _logger.LogInformation($"Found {stations.Count} weather stations");
+            _logger.LogInformation($"Creating job {jobId}");
 
-            // Create job record in Table Storage
-            await _tableStorageService.CreateJobAsync(jobId, stations.Count);
-
-            // Enqueue messages for each station
-            foreach (var station in stations)
+            // Enqueue job start message to job-start-queue
+            // The JobInitiatorFunction will fetch stations and fan out to image-processing-queue
+            var jobStartMessage = new JobStartMessage
             {
-                var message = new ImageProcessingMessage
-                {
-                    JobId = jobId,
-                    StationId = station.StationId,
-                    StationName = station.StationName
-                };
+                JobId = jobId
+            };
 
-                var messageJson = JsonSerializer.Serialize(message);
-                await _queueService.EnqueueMessageAsync("image-processing-queue", messageJson);
-            }
+            var messageJson = JsonSerializer.Serialize(jobStartMessage);
+            await _queueService.EnqueueMessageAsync("job-start-queue", messageJson);
 
-            _logger.LogInformation($"Job {jobId} created with {stations.Count} stations");
+            _logger.LogInformation($"Job {jobId} enqueued to job-start-queue");
 
             // Return response
             var response = req.CreateResponse(HttpStatusCode.Accepted);
             await response.WriteAsJsonAsync(new StartJobResponse
             {
                 JobId = jobId,
-                Status = "InProgress",
-                Message = $"Job started with {stations.Count} stations"
+                Status = "Queued",
+                Message = "Job has been queued for processing"
             });
 
             return response;

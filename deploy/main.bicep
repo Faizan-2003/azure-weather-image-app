@@ -51,7 +51,13 @@ resource queueService 'Microsoft.Storage/storageAccounts/queueServices@2023-01-0
   name: 'default'
 }
 
-// Queue for image processing
+// Queue for job start (first queue - receives job initiation messages)
+resource jobStartQueue 'Microsoft.Storage/storageAccounts/queueServices/queues@2023-01-01' = {
+  parent: queueService
+  name: 'job-start-queue'
+}
+
+// Queue for image processing (second queue - receives per-station processing messages)
 resource imageProcessingQueue 'Microsoft.Storage/storageAccounts/queueServices/queues@2023-01-01' = {
   parent: queueService
   name: 'image-processing-queue'
