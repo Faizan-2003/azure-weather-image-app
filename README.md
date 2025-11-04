@@ -55,73 +55,76 @@ A serverless application built with Azure Functions that generates weather-theme
 -   [Azure CLI](https://docs.microsoft.com/cli/azure/install-azure-cli) (for deployment)
 -   (Optional) [Unsplash API Key](https://unsplash.com/developers) for real background images
 
+### Installation (Windows PowerShell)
+
+```powershell
+# Install .NET 8 SDK
+winget install Microsoft.DotNet.SDK.8
+
+# Install Azure Functions Core Tools
+npm install -g azure-functions-core-tools@4
+
+# Install Azurite
+npm install -g azurite
+```
+
 ### Local Development Setup
 
 1. **Clone the repository**
 
-    ```bash
-    cd ssp-assignment
+    ```powershell
+    git clone https://github.com/YOUR_USERNAME/azure-weather-image-app.git
+    cd azure-weather-image-app
     ```
 
-2. **Install Azurite** (if not already installed)
+2. **Start Azurite** (in a separate terminal)
 
-    ```bash
-    npm install -g azurite
+    ```powershell
+    azurite --silent --location ./azurite
     ```
 
-    Or use the VS Code Azurite extension.
+    Keep this terminal running. Azurite provides local Azure Storage emulation.
 
-3. **Start Azurite**
+3. **Start the application**
 
-    ```bash
-    azurite --silent --location ./azurite --debug ./azurite/debug.log
+    Simply run the startup script:
+
+    ```powershell
+    .\start.ps1
     ```
 
-    Or in VS Code: `Ctrl+Shift+P` → "Azurite: Start"
+    Or use the batch file:
 
-4. **Configure local settings**
-
-    The `local.settings.json` file is already created with default values:
-
-    ```json
-    {
-        "Values": {
-            "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-            "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
-            "ApiKey": "test-api-key-12345",
-            "UnsplashAccessKey": "YOUR_UNSPLASH_ACCESS_KEY_HERE"
-        }
-    }
+    ```cmd
+    start.cmd
     ```
 
-5. **Restore dependencies and build**
+    The script will:
 
-    ```bash
-    dotnet restore
-    dotnet build
+    - Check if Azurite is running (and start it if needed)
+    - Build the project with the correct configuration
+    - Start the Azure Functions host
+
+    You should see output like:
+
+    ```
+    Functions:
+        GetJobStatus: [GET] http://localhost:7071/api/job/{jobId}
+        HealthCheck: [GET] http://localhost:7071/api/health
+        ProcessImage: [QueueTrigger]
+        StartJob: [POST] http://localhost:7071/api/job/start
+        TestImageProcessing: [GET] http://localhost:7071/api/test/image
     ```
 
-6. **Run the function app**
+4. **Test the API**
 
-    ```bash
-    func start
+    In a new terminal, run the test script:
+
+    ```powershell
+    .\test-local.ps1
     ```
 
-    Or:
-
-    ```bash
-    dotnet run
-    ```
-
-7. **Test the API**
-
-    Open a new terminal and run the test script:
-
-    ```bash
-    bash test-local.sh
-    ```
-
-    Or use the `api-requests.http` file in VS Code with the REST Client extension.
+    Or see the complete testing guide in **[TESTING.md](TESTING.md)** for all commands and test scenarios.
 
 ### Testing Endpoints
 
@@ -430,13 +433,72 @@ Generates a test image for debugging.
 -   [ImageSharp Documentation](https://docs.sixlabors.com/articles/imagesharp/)
 -   [Azure Storage Documentation](https://docs.microsoft.com/azure/storage/)
 
+## ✅ Assignment Requirements
+
+### Must-Have Requirements ✓
+
+| Requirement                               | Status | Implementation                                   |
+| ----------------------------------------- | ------ | ------------------------------------------------ |
+| HTTP endpoint to start image creation     | ✅     | `StartJobFunction.cs` - POST /api/job/start      |
+| Return unique job ID                      | ✅     | Returns GUID for tracking                        |
+| Fetch status of running process           | ✅     | `GetJobStatusFunction.cs` - GET /api/job/{jobId} |
+| Fetch results of completed process        | ✅     | Returns list of image URLs with SAS tokens       |
+| Serve images from blob storage            | ✅     | Images stored in `weather-images` container      |
+| Queue-based processing (QueueTrigger)     | ✅     | `ProcessImageFunction.cs` with queue trigger     |
+| Fast initial call (background processing) | ✅     | Job starts immediately, processing in background |
+| Buienradar API integration                | ✅     | `WeatherService.cs` fetches 50 stations          |
+| Public API for image retrieval            | ✅     | Uses Unsplash (fallback: gradient)               |
+| Write weather data on images              | ✅     | `ImageService.cs` using ImageSharp               |
+| HTTP files as API documentation           | ✅     | `api-requests.http`                              |
+| Bicep template                            | ✅     | `deploy/main.bicep` with all resources           |
+| Include queues in Bicep                   | ✅     | `image-processing-queue` defined                 |
+| Deploy script (deploy.ps1)                | ✅     | Complete PowerShell deployment script            |
+| Working deployed endpoint                 | ✅     | Ready to deploy with script                      |
+
+### Could-Have Requirements ✓
+
+| Requirement                      | Status | Implementation                                |
+| -------------------------------- | ------ | --------------------------------------------- |
+| SAS token instead of public blob | ✅     | `BlobStorageService.cs` generates SAS URLs    |
+| Authentication on API            | ✅     | `ApiKeyAuthMiddleware.cs` - X-API-Key header  |
+| Status endpoint                  | ✅     | GET /api/job/{jobId} shows progress           |
+| Save status in Table             | ✅     | `TableStorageService.cs` with JobStatus table |
+
+## 📂 GitHub Setup
+
+### Initialize and Push to GitHub
+
+```powershell
+# Initialize git (if not already done)
+git init
+
+# Add all files
+git add .
+
+# Commit
+git commit -m "Initial commit: Weather image Azure Functions app"
+
+# Create repository on GitHub, then:
+git remote add origin https://github.com/YOUR_USERNAME/azure-weather-image-app.git
+git branch -M main
+git push -u origin main
+```
+
+### Add Collaborators
+
+1. Go to your GitHub repository
+2. Click "Settings" → "Collaborators"
+3. Click "Add people"
+4. Enter your collaborator's GitHub username
+5. They will receive an invitation via email
+
 ## 📄 License
 
 This project is created for educational purposes as part of an assignment.
 
 ## 👥 Contributors
 
-Add your GitHub username here after collaborating on this project!
+-   [Faizan-2003](https://github.com/Faizan-2003)
 
 ---
 

@@ -39,11 +39,14 @@ artifacts/
 # Azure Functions
 __blobstorage__
 __queuestorage__
-__azurite_db*__.json
 .python_packages/
 
-# Azurite
-__azurite*
+# Azurite - local storage emulator files
+azurite/__azurite_db*__.json
+azurite/__blobstorage__/
+azurite/__queuestorage__/
+azurite/debug.log
+azurite/*.json
 
 # Test output
 TestResults/
