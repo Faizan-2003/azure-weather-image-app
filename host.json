@@ -1,0 +1,25 @@
+{
+    "version": "2.0",
+    "logging": {
+        "applicationInsights": {
+            "samplingSettings": {
+                "isEnabled": true,
+                "maxTelemetryItemsPerSecond": 20
+            }
+        },
+        "logLevel": {
+            "default": "Information",
+            "Host.Results": "Information",
+            "Function": "Information",
+            "Host.Aggregator": "Trace"
+        }
+    },
+    "extensions": {
+        "queues": {
+            "batchSize": 16,
+            "maxDequeueCount": 5,
+            "newBatchThreshold": 8,
+            "visibilityTimeout": "00:05:00"
+        }
+    }
+}

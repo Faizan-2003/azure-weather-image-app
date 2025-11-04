@@ -1,0 +1,443 @@
+# Weather Image Application - Azure Functions
+
+A serverless application built with Azure Functions that generates weather-themed images for Dutch weather stations. The application fetches real-time weather data from Buienradar API and overlays it on beautiful background images.
+
+## 🌟 Features
+
+-   **HTTP API** for starting jobs and checking status
+-   **Queue-based processing** for scalable background image generation
+-   **Blob Storage** for secure image storage with SAS token access
+-   **Table Storage** for persistent job tracking
+-   **API Key authentication** for all endpoints
+-   **Automatic fan-out pattern** - processes 50 weather stations in parallel
+-   **Real-time weather data** from Buienradar Netherlands
+-   **Beautiful image composition** using ImageSharp library
+
+## 📋 Architecture
+
+```
+┌─────────────┐
+│   Client    │
+└──────┬──────┘
+       │
+       │ POST /api/job/start
+       ▼
+┌─────────────────┐         ┌──────────────┐
+│ StartJobFunction├────────►│ Queue Storage│
+└─────────────────┘         └──────┬───────┘
+       │                           │
+       │                           │ Messages (50)
+       ▼                           ▼
+┌─────────────────┐         ┌──────────────────┐
+│ Table Storage   │◄────────┤ProcessImageFunction│
+│   (Job State)   │         └──────────┬─────────┘
+└─────────────────┘                    │
+       ▲                               ▼
+       │                        ┌──────────────┐
+       │                        │ Blob Storage │
+       │                        │   (Images)   │
+       │                        └──────────────┘
+       │
+       │ GET /api/job/{id}
+┌──────┴──────┐
+│GetJobStatus │
+│  Function   │
+└─────────────┘
+```
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+-   [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+-   [Azure Functions Core Tools](https://docs.microsoft.com/azure/azure-functions/functions-run-local)
+-   [Azurite](https://docs.microsoft.com/azure/storage/common/storage-use-azurite) (for local development)
+-   [Azure CLI](https://docs.microsoft.com/cli/azure/install-azure-cli) (for deployment)
+-   (Optional) [Unsplash API Key](https://unsplash.com/developers) for real background images
+
+### Local Development Setup
+
+1. **Clone the repository**
+
+    ```bash
+    cd ssp-assignment
+    ```
+
+2. **Install Azurite** (if not already installed)
+
+    ```bash
+    npm install -g azurite
+    ```
+
+    Or use the VS Code Azurite extension.
+
+3. **Start Azurite**
+
+    ```bash
+    azurite --silent --location ./azurite --debug ./azurite/debug.log
+    ```
+
+    Or in VS Code: `Ctrl+Shift+P` → "Azurite: Start"
+
+4. **Configure local settings**
+
+    The `local.settings.json` file is already created with default values:
+
+    ```json
+    {
+        "Values": {
+            "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+            "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+            "ApiKey": "test-api-key-12345",
+            "UnsplashAccessKey": "YOUR_UNSPLASH_ACCESS_KEY_HERE"
+        }
+    }
+    ```
+
+5. **Restore dependencies and build**
+
+    ```bash
+    dotnet restore
+    dotnet build
+    ```
+
+6. **Run the function app**
+
+    ```bash
+    func start
+    ```
+
+    Or:
+
+    ```bash
+    dotnet run
+    ```
+
+7. **Test the API**
+
+    Open a new terminal and run the test script:
+
+    ```bash
+    bash test-local.sh
+    ```
+
+    Or use the `api-requests.http` file in VS Code with the REST Client extension.
+
+### Testing Endpoints
+
+The application exposes three main endpoints:
+
+#### 1. Start a New Job
+
+```http
+POST http://localhost:7071/api/job/start
+X-API-Key: test-api-key-12345
+```
+
+Response:
+
+```json
+{
+    "jobId": "550e8400-e29b-41d4-a716-446655440000",
+    "status": "InProgress",
+    "message": "Job started with 50 stations"
+}
+```
+
+#### 2. Get Job Status
+
+```http
+GET http://localhost:7071/api/job/{jobId}
+X-API-Key: test-api-key-12345
+```
+
+Response:
+
+```json
+{
+    "jobId": "550e8400-e29b-41d4-a716-446655440000",
+    "status": "InProgress",
+    "totalStations": 50,
+    "processedStations": 25,
+    "images": [
+        {
+            "stationName": "Amsterdam",
+            "imageUrl": "https://...blob.core.windows.net/weather-images/...",
+            "createdAt": "2025-11-04T12:00:00Z"
+        }
+    ]
+}
+```
+
+#### 3. Test Image Generation
+
+```http
+GET http://localhost:7071/api/test/image
+X-API-Key: test-api-key-12345
+```
+
+Returns a JPEG image directly in the response.
+
+## 🌐 Deployment to Azure
+
+### Option 1: Using the Deployment Script (Recommended)
+
+```powershell
+.\deploy.ps1 `
+  -ResourceGroupName "rg-weather-image-app" `
+  -Location "westeurope" `
+  -ApiKey "your-secure-api-key-here" `
+  -UnsplashAccessKey "your-unsplash-key"
+```
+
+The script will:
+
+1. Create the resource group
+2. Deploy all Azure resources using Bicep
+3. Build and publish the .NET project
+4. Package the application
+5. Deploy to Azure Functions
+
+### Option 2: Manual Deployment
+
+1. **Login to Azure**
+
+    ```powershell
+    az login
+    ```
+
+2. **Create resource group**
+
+    ```powershell
+    az group create --name rg-weather-image --location westeurope
+    ```
+
+3. **Deploy Bicep template**
+
+    ```powershell
+    az deployment group create `
+      --name weather-deployment `
+      --resource-group rg-weather-image `
+      --template-file deploy/main.bicep `
+      --parameters apiKey="your-api-key" unsplashAccessKey="your-unsplash-key"
+    ```
+
+4. **Build and publish**
+
+    ```powershell
+    dotnet publish --configuration Release --output publish
+    ```
+
+5. **Create deployment package**
+
+    ```powershell
+    Compress-Archive -Path "publish\*" -DestinationPath deploy.zip -Force
+    ```
+
+6. **Deploy to Azure Functions**
+    ```powershell
+    az functionapp deployment source config-zip `
+      --resource-group rg-weather-image `
+      --name your-function-app-name `
+      --src deploy.zip
+    ```
+
+## 📦 Project Structure
+
+```
+ssp-assignment/
+├── Functions/
+│   ├── StartJobFunction.cs          # HTTP trigger to start jobs
+│   ├── GetJobStatusFunction.cs      # HTTP trigger to get status
+│   ├── ProcessImageFunction.cs      # Queue trigger for processing
+│   └── TestImageProcessingFunction.cs # HTTP trigger for testing
+├── Services/
+│   ├── IWeatherService.cs           # Weather data interface
+│   ├── WeatherService.cs            # Buienradar integration
+│   ├── IImageService.cs             # Image generation interface
+│   ├── ImageService.cs              # ImageSharp implementation
+│   ├── IBlobStorageService.cs       # Blob storage interface
+│   ├── BlobStorageService.cs        # Azure Blob integration
+│   ├── IQueueService.cs             # Queue interface
+│   ├── QueueService.cs              # Azure Queue integration
+│   ├── ITableStorageService.cs      # Table storage interface
+│   └── TableStorageService.cs       # Azure Table integration
+├── Models/
+│   ├── WeatherStation.cs            # Weather data model
+│   ├── ImageInfo.cs                 # Image metadata model
+│   ├── ImageProcessingMessage.cs    # Queue message model
+│   ├── JobStatusEntity.cs           # Table entity model
+│   ├── StartJobResponse.cs          # API response model
+│   └── JobStatusResponse.cs         # API response model
+├── Middleware/
+│   └── ApiKeyAuthMiddleware.cs      # API key authentication
+├── deploy/
+│   └── main.bicep                   # Infrastructure as Code
+├── Program.cs                       # Application entry point
+├── host.json                        # Function host configuration
+├── local.settings.json              # Local development settings
+├── ssp.csproj                       # Project file
+├── deploy.ps1                       # Deployment script
+├── api-requests.http                # API documentation
+├── test-local.sh                    # Local test script
+├── test-features.sh                 # Feature test script
+└── README.md                        # This file
+```
+
+## 🔑 API Authentication
+
+All API endpoints require an `X-API-Key` header:
+
+```http
+X-API-Key: your-api-key-here
+```
+
+### Local Development
+
+Use: `test-api-key-12345`
+
+### Production
+
+Set a secure API key during deployment.
+
+## 🧪 Testing
+
+### Automated Tests
+
+Run all feature tests:
+
+```bash
+bash test-features.sh
+```
+
+Run basic local tests:
+
+```bash
+bash test-local.sh
+```
+
+### Manual Testing with VS Code REST Client
+
+1. Install the "REST Client" extension in VS Code
+2. Open `api-requests.http`
+3. Click "Send Request" above any HTTP request
+
+## 📊 Azure Resources Created
+
+The Bicep template creates the following resources:
+
+| Resource Type        | Name                          | Purpose                           |
+| -------------------- | ----------------------------- | --------------------------------- |
+| Storage Account      | `stweather{unique}`           | Stores blobs, queues, and tables  |
+| Blob Container       | `weather-images`              | Stores generated images (private) |
+| Queue                | `image-processing-queue`      | Message queue for processing      |
+| Table                | `JobStatus`                   | Stores job state and progress     |
+| App Service Plan     | `{function-app}-plan`         | Consumption plan (Y1)             |
+| Function App         | `weather-image-func-{unique}` | Hosts the application             |
+| Application Insights | `{function-app}-insights`     | Monitoring and logging            |
+
+## 🔧 Configuration
+
+### Environment Variables
+
+| Variable                   | Description                 | Default (Local)              |
+| -------------------------- | --------------------------- | ---------------------------- |
+| `AzureWebJobsStorage`      | Storage connection string   | `UseDevelopmentStorage=true` |
+| `ApiKey`                   | API authentication key      | `test-api-key-12345`         |
+| `UnsplashAccessKey`        | Unsplash API key (optional) | Empty (uses gradient)        |
+| `FUNCTIONS_WORKER_RUNTIME` | Runtime identifier          | `dotnet-isolated`            |
+
+## 📝 API Endpoints Reference
+
+### POST /api/job/start
+
+Starts a new image generation job.
+
+**Headers:**
+
+-   `X-API-Key`: Your API key
+
+**Response:** 202 Accepted
+
+```json
+{
+    "jobId": "uuid",
+    "status": "InProgress",
+    "message": "Job started with N stations"
+}
+```
+
+### GET /api/job/{jobId}
+
+Retrieves job status and results.
+
+**Headers:**
+
+-   `X-API-Key`: Your API key
+
+**Response:** 200 OK
+
+```json
+{
+  "jobId": "uuid",
+  "status": "InProgress|Completed",
+  "totalStations": 50,
+  "processedStations": 25,
+  "images": [...]
+}
+```
+
+### GET /api/test/image
+
+Generates a test image for debugging.
+
+**Headers:**
+
+-   `X-API-Key`: Your API key
+
+**Response:** 200 OK (image/jpeg)
+
+## 🐛 Troubleshooting
+
+### Azurite Connection Issues
+
+-   Ensure Azurite is running: `azurite --silent`
+-   Check that `local.settings.json` has `UseDevelopmentStorage=true`
+
+### Function Not Responding
+
+-   Check the function host is running: `func start`
+-   Verify the correct port (default: 7071)
+-   Check firewall settings
+
+### Queue Messages Not Processing
+
+-   Verify Azurite is running
+-   Check function host logs for errors
+-   Ensure `image-processing-queue` exists in Azurite
+
+### Images Not Uploading
+
+-   Check blob storage connection
+-   Verify `weather-images` container exists
+-   Check function logs for detailed errors
+
+## 📚 Additional Resources
+
+-   [Azure Functions Documentation](https://docs.microsoft.com/azure/azure-functions/)
+-   [Buienradar API](https://data.buienradar.nl/2.0/feed/json)
+-   [Unsplash API](https://unsplash.com/developers)
+-   [ImageSharp Documentation](https://docs.sixlabors.com/articles/imagesharp/)
+-   [Azure Storage Documentation](https://docs.microsoft.com/azure/storage/)
+
+## 📄 License
+
+This project is created for educational purposes as part of an assignment.
+
+## 👥 Contributors
+
+Add your GitHub username here after collaborating on this project!
+
+---
+
+**Happy Coding! 🚀**
