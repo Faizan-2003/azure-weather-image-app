@@ -655,14 +655,26 @@
             }
 
             function updateJobStatus(data) {
-                const {
+                // Handle both camelCase and PascalCase from API
+                const jobId = data.jobId || data.JobId;
+                const status = data.status || data.Status;
+                const totalStations =
+                    data.totalStations || data.TotalStations || 0;
+                const processedStations =
+                    data.processedStations || data.ProcessedStations || 0;
+                const failedStations =
+                    data.failedStations || data.FailedStations || 0;
+                const images = data.images || data.Images || [];
+
+                console.log("Job status update:", {
                     jobId,
                     status,
                     totalStations,
                     processedStations,
                     failedStations,
                     images,
-                } = data;
+                    rawData: data,
+                });
 
                 // Update progress bar
                 const progress =
@@ -708,15 +720,20 @@
                 gallery.innerHTML = "";
 
                 images.forEach((img) => {
+                    // Handle both camelCase and PascalCase
+                    const imageUrl = img.imageUrl || img.ImageUrl;
+                    const stationName = img.stationName || img.StationName;
+                    const temperature = img.temperature || img.Temperature;
+                    const weatherDescription =
+                        img.weatherDescription || img.WeatherDescription;
+
                     const card = document.createElement("div");
                     card.className = "image-card";
                     card.innerHTML = `
-                    <img src="${img.imageUrl}" alt="${
-                        img.stationName
-                    }" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22200%22%3E%3Crect fill=%22%23ddd%22 width=%22300%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 fill=%22%23999%22 text-anchor=%22middle%22 dy=%22.3em%22%3EImage Loading...%3C/text%3E%3C/svg%3E'">
-                    <h3>${img.stationName}</h3>
-                    <p>🌡️ Temperature: ${img.temperature || "N/A"}°C</p>
-                    <p>☁️ Weather: ${img.weatherDescription || "N/A"}</p>
+                    <img src="${imageUrl}" alt="${stationName}" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22200%22%3E%3Crect fill=%22%23ddd%22 width=%22300%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 fill=%22%23999%22 text-anchor=%22middle%22 dy=%22.3em%22%3EImage Loading...%3C/text%3E%3C/svg%3E'">
+                    <h3>${stationName}</h3>
+                    <p>🌡️ Temperature: ${temperature || "N/A"}°C</p>
+                    <p>☁️ Weather: ${weatherDescription || "N/A"}</p>
                 `;
                     gallery.appendChild(card);
                 });
