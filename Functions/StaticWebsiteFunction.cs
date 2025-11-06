@@ -15,10 +15,23 @@ namespace AzureWeatherImageApp.Functions
         }
 
         [Function("ServeWebsite")]
-        public async Task<HttpResponseData> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequestData req)
+        public async Task<HttpResponseData> ServeWebsite(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "ServeWebsite")] HttpRequestData req)
         {
             _logger.LogInformation("Serving static website");
+            return await ServeHtmlPage(req);
+        }
+
+        [Function("HomePage")]
+        public async Task<HttpResponseData> HomePage(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "")] HttpRequestData req)
+        {
+            _logger.LogInformation("Serving homepage");
+            return await ServeHtmlPage(req);
+        }
+
+        private async Task<HttpResponseData> ServeHtmlPage(HttpRequestData req)
+        {
 
             var response = req.CreateResponse(HttpStatusCode.OK);
             response.Headers.Add("Content-Type", "text/html; charset=utf-8");
