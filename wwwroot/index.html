@@ -284,15 +284,13 @@
     <body>
         <div class="container">
             <div class="header">
-                <h1>🌤️ Azure Weather Image Generator</h1>
-                <p>
-                    Generate beautiful weather images for Dutch weather stations
-                </p>
+                <h1>Azure Weather Image Generator</h1>
+                <p>Generate weather images for Dutch weather stations</p>
             </div>
 
             <div class="card">
                 <div class="api-key-section">
-                    <label for="apiKey">🔑 API Key:</label>
+                    <label for="apiKey">API Key:</label>
                     <input
                         type="text"
                         id="apiKey"
@@ -304,10 +302,10 @@
 
                 <div class="button-group">
                     <button class="btn-success" onclick="testHealth()">
-                        🏥 Test Health
+                        Test Health
                     </button>
                     <button class="btn-primary" onclick="startJob()">
-                        🚀 Start Weather Job
+                        Start Weather Job
                     </button>
                     <button
                         class="btn-info"
@@ -315,7 +313,7 @@
                         id="checkStatusBtn"
                         disabled
                     >
-                        📊 Check Job Status
+                        Check Job Status
                     </button>
                 </div>
 
@@ -330,7 +328,7 @@
                 <div class="image-gallery" id="imageGallery"></div>
 
                 <div class="endpoint-info">
-                    <h3>📡 API Endpoints (Click to Test):</h3>
+                    <h3>API Endpoints (Click to Test):</h3>
                     <div
                         style="
                             margin: 15px 0;
@@ -341,7 +339,7 @@
                         "
                     >
                         <p style="margin-bottom: 15px">
-                            <strong>🏥 Health Check:</strong><br />
+                            <strong>Health Check:</strong><br />
                             <code
                                 style="
                                     background: white;
@@ -368,7 +366,7 @@
                                 https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/health
                             </a>
                             <span style="color: #28a745; margin-left: 10px"
-                                >✓ No API key needed in browser</span
+                                >No API key needed in browser</span
                             >
                         </p>
 
@@ -397,7 +395,7 @@
                                     margin-top: 5px;
                                 "
                             >
-                                🖱️ Click Here to Start Job
+                                Click Here to Start Job
                             </button>
                             <span
                                 style="
@@ -405,12 +403,12 @@
                                     margin-left: 10px;
                                     font-size: 0.9em;
                                 "
-                                >⚠️ POST requests need button click</span
+                                >POST requests need button click</span
                             >
                         </p>
 
                         <p style="margin-bottom: 15px">
-                            <strong>📊 Check Job Status:</strong><br />
+                            <strong>Check Job Status:</strong><br />
                             <code
                                 style="
                                     background: white;
@@ -430,7 +428,7 @@
                         </p>
 
                         <p style="margin-bottom: 15px">
-                            <strong>🎨 Web Interface:</strong><br />
+                            <strong>Web Interface:</strong><br />
                             <code
                                 style="
                                     background: white;
@@ -456,25 +454,8 @@
                                 https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/ServeWebsite
                             </a>
                             <span style="color: #28a745; margin-left: 10px"
-                                >✓ This page!</span
+                                >This page!</span
                             >
-                        </p>
-
-                        <p
-                            style="
-                                margin: 15px 0 0 0;
-                                padding: 10px;
-                                background: white;
-                                border-radius: 4px;
-                                font-size: 0.9em;
-                            "
-                        >
-                            <strong>💡 For Teachers:</strong> All green-marked
-                            links are clickable and work directly in your
-                            browser! The Health Check and Web Interface
-                            endpoints can be tested by simply clicking the
-                            links. For the Start Job endpoint, use the button
-                            above to trigger the POST request.
                         </p>
                     </div>
                 </div>
@@ -519,7 +500,7 @@
             }
 
             async function testHealth() {
-                showStatus("🔄 Testing health endpoint...", "info");
+                showStatus("Testing health endpoint...", "info");
 
                 try {
                     const response = await fetch(`${API_BASE_URL}/api/health`, {
@@ -531,25 +512,22 @@
                     if (response.ok) {
                         const text = await response.text();
                         showStatus(
-                            `✅ Health Check Passed!<br><strong>${text}</strong>`,
+                            `Health Check Passed!<br><strong>${text}</strong>`,
                             "success"
                         );
                     } else {
                         showStatus(
-                            `❌ Health check failed: ${response.status} ${response.statusText}`,
+                            `Health check failed: ${response.status} ${response.statusText}`,
                             "error"
                         );
                     }
                 } catch (error) {
-                    showStatus(`❌ Error: ${error.message}`, "error");
+                    showStatus(`Error: ${error.message}`, "error");
                 }
             }
 
             async function startJob() {
-                showStatus(
-                    "🚀 Starting weather image generation job...",
-                    "info"
-                );
+                showStatus("Starting weather image generation job...", "info");
                 document.getElementById("imageGallery").innerHTML = "";
 
                 try {
@@ -582,7 +560,7 @@
                         });
 
                         showStatus(
-                            `✅ Job Started Successfully!<br><strong>Job ID:</strong> ${jobId}<br><strong>Status:</strong> ${status}<br><strong>Message:</strong> ${message}`,
+                            `Job Started Successfully!<br><strong>Job ID:</strong> ${jobId}<br><strong>Status:</strong> ${status}<br><strong>Message:</strong> ${message}`,
                             "success"
                         );
 
@@ -595,9 +573,9 @@
                                target="_blank" 
                                onclick="checkJobStatus(); return false;"
                                style="color: #667eea; text-decoration: none; font-weight: bold;">
-                                🔗 ${statusUrl}
+                                 ${statusUrl}
                             </a>
-                            <span style="color: #28a745; margin-left: 10px;">✓ Click to check status</span>
+                            <span style="color: #28a745; margin-left: 10px;">Click to check status</span>
                         `;
 
                         document.getElementById(
@@ -612,19 +590,19 @@
                     } else {
                         const errorText = await response.text();
                         showStatus(
-                            `❌ Failed to start job: ${response.status}<br>${errorText}`,
+                            `Failed to start job: ${response.status}<br>${errorText}`,
                             "error"
                         );
                     }
                 } catch (error) {
-                    showStatus(`❌ Error: ${error.message}`, "error");
+                    showStatus(`Error: ${error.message}`, "error");
                 }
             }
 
             async function checkJobStatus() {
                 if (!currentJobId) {
                     showStatus(
-                        "⚠️ No job ID available. Please start a job first.",
+                        "No job ID available. Please start a job first.",
                         "warning"
                     );
                     return;
@@ -645,12 +623,12 @@
                         updateJobStatus(data);
                     } else {
                         showStatus(
-                            `❌ Failed to get job status: ${response.status}`,
+                            `Failed to get job status: ${response.status}`,
                             "error"
                         );
                     }
                 } catch (error) {
-                    showStatus(`❌ Error: ${error.message}`, "error");
+                    showStatus(`Error: ${error.message}`, "error");
                 }
             }
 
@@ -723,17 +701,12 @@
                     // Handle both camelCase and PascalCase
                     const imageUrl = img.imageUrl || img.ImageUrl;
                     const stationName = img.stationName || img.StationName;
-                    const temperature = img.temperature || img.Temperature;
-                    const weatherDescription =
-                        img.weatherDescription || img.WeatherDescription;
-
                     const card = document.createElement("div");
                     card.className = "image-card";
                     card.innerHTML = `
                     <img src="${imageUrl}" alt="${stationName}" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22200%22%3E%3Crect fill=%22%23ddd%22 width=%22300%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 fill=%22%23999%22 text-anchor=%22middle%22 dy=%22.3em%22%3EImage Loading...%3C/text%3E%3C/svg%3E'">
                     <h3>${stationName}</h3>
-                    <p>🌡️ Temperature: ${temperature || "N/A"}°C</p>
-                    <p>☁️ Weather: ${weatherDescription || "N/A"}</p>
+         
                 `;
                     gallery.appendChild(card);
                 });
