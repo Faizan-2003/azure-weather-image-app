@@ -26,8 +26,15 @@ namespace AzureWeatherImageApp.Functions
         public async Task<HttpResponseData> ServeWebsite(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "ServeWebsite")] HttpRequestData req)
         {
-            _logger.LogInformation("Serving static website");
-            return await ServeHtmlPage(req);
+            _logger.LogInformation("ServeWebsite function called");
+            
+            // Simple test response
+            var response = req.CreateResponse(HttpStatusCode.OK);
+            response.Headers.Add("Content-Type", "text/html; charset=utf-8");
+            await response.WriteStringAsync("<html><body><h1>Hello from Azure Functions!</h1><p>If you see this, the function is working!</p></body></html>");
+            return response;
+            
+            // return await ServeHtmlPage(req);
         }
 
         private async Task<HttpResponseData> ServeHtmlPage(HttpRequestData req)
@@ -36,18 +43,40 @@ namespace AzureWeatherImageApp.Functions
             var response = req.CreateResponse(HttpStatusCode.OK);
             response.Headers.Add("Content-Type", "text/html; charset=utf-8");
 
-            // Read the HTML file
-            var htmlPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "index.html");
-            
-            if (File.Exists(htmlPath))
+            // Read the HTML file - try multiple paths for Azure compatibility
+            var paths = new[]
             {
-                var htmlContent = await File.ReadAllTextAsync(htmlPath);
+                Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "index.html"),
+                Path.Combine(Environment.CurrentDirectory, "wwwroot", "index.html"),
+                Path.Combine(AppContext.BaseDirectory, "wwwroot", "index.html"),
+                "wwwroot/index.html"
+            };
+
+            string? htmlContent = null;
+            string? foundPath = null;
+
+            foreach (var path in paths)
+            {
+                _logger.LogInformation($"Trying path: {path}");
+                if (File.Exists(path))
+                {
+                    htmlContent = await File.ReadAllTextAsync(path);
+                    foundPath = path;
+                    break;
+                }
+            }
+            
+            if (htmlContent != null)
+            {
+                _logger.LogInformation($"Successfully loaded HTML from: {foundPath}");
                 await response.WriteStringAsync(htmlContent);
             }
             else
             {
                 response.StatusCode = HttpStatusCode.NotFound;
-                await response.WriteStringAsync("Website not found");
+                var currentDir = Directory.GetCurrentDirectory();
+                var appDir = AppContext.BaseDirectory;
+                await response.WriteStringAsync($"Website not found. Tried paths: {string.Join(", ", paths)}. Current: {currentDir}, App: {appDir}");
             }
 
             return response;
