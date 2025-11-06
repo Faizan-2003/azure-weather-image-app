@@ -348,3 +348,6 @@ This project is created for educational purposes as part of a cloud computing as
 **Repository:** https://github.com/Faizan-2003/azure-weather-image-app
 
 ---
+
+<!-- Deployment trigger -->
+
