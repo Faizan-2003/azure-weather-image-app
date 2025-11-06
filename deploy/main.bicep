@@ -63,6 +63,12 @@ resource imageProcessingQueue 'Microsoft.Storage/storageAccounts/queueServices/q
   name: 'image-processing-queue'
 }
 
+// Poison queue for failed image processing messages
+resource imageProcessingPoisonQueue 'Microsoft.Storage/storageAccounts/queueServices/queues@2023-01-01' = {
+  parent: queueService
+  name: 'image-processing-queue-poison'
+}
+
 // Table Service
 resource tableService 'Microsoft.Storage/storageAccounts/tableServices@2023-01-01' = {
   parent: storageAccount

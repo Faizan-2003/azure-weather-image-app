@@ -38,15 +38,22 @@ public class ApiKeyAuthMiddleware : IFunctionsWorkerMiddleware
                 
                 if (!string.IsNullOrEmpty(expectedApiKey))
                 {
-                    // Get API key from header
+                    // Get API key from header first
                     var providedApiKey = requestData.Headers.TryGetValues("X-API-Key", out var values) 
                         ? values.FirstOrDefault() 
                         : null;
 
+                    // If not in header, check query parameter
+                    if (string.IsNullOrEmpty(providedApiKey))
+                    {
+                        var query = System.Web.HttpUtility.ParseQueryString(requestData.Url.Query);
+                        providedApiKey = query["apiKey"];
+                    }
+
                     if (string.IsNullOrEmpty(providedApiKey) || providedApiKey != expectedApiKey)
                     {
                         var response = requestData.CreateResponse(HttpStatusCode.Unauthorized);
-                        await response.WriteStringAsync("Unauthorized: Invalid or missing API key");
+                        await response.WriteStringAsync("Unauthorized: Invalid or missing API key. Provide 'X-API-Key' header or '?apiKey=' query parameter.");
                         
                         context.GetInvocationResult().Value = response;
                         return;

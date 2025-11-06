@@ -20,9 +20,16 @@
         },
         "queues": {
             "batchSize": 16,
-            "maxDequeueCount": 5,
+            "maxDequeueCount": 3,
             "newBatchThreshold": 8,
-            "visibilityTimeout": "00:05:00"
+            "visibilityTimeout": "00:00:30",
+            "maxPollingInterval": "00:00:02"
         }
+    },
+    "retry": {
+        "strategy": "exponentialBackoff",
+        "maxRetryCount": 3,
+        "minimumInterval": "00:00:05",
+        "maximumInterval": "00:01:00"
     }
 }
