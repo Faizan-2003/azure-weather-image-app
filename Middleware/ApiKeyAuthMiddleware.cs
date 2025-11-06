@@ -25,9 +25,11 @@ public class ApiKeyAuthMiddleware : IFunctionsWorkerMiddleware
         
         if (requestData != null)
         {
-            // Check if the function should skip authentication (web interface functions)
+            // Check if the function should skip authentication (web interface functions and health check)
             var targetMethod = context.FunctionDefinition.Name;
-            var skipAuth = targetMethod == "ServeWebsite" || targetMethod == "HomePage";
+            var skipAuth = targetMethod == "ServeWebsite" 
+                        || targetMethod == "HomePage" 
+                        || targetMethod == "HealthCheck";
             
             if (!skipAuth)
             {

@@ -27,14 +27,7 @@ namespace AzureWeatherImageApp.Functions
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "ServeWebsite")] HttpRequestData req)
         {
             _logger.LogInformation("ServeWebsite function called");
-            
-            // Simple test response
-            var response = req.CreateResponse(HttpStatusCode.OK);
-            response.Headers.Add("Content-Type", "text/html; charset=utf-8");
-            await response.WriteStringAsync("<html><body><h1>Hello from Azure Functions!</h1><p>If you see this, the function is working!</p></body></html>");
-            return response;
-            
-            // return await ServeHtmlPage(req);
+            return await ServeHtmlPage(req);
         }
 
         private async Task<HttpResponseData> ServeHtmlPage(HttpRequestData req)

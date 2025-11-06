@@ -1,0 +1,204 @@
+[
+  {
+    "name": "HomePage",
+    "scriptFile": "ssp.dll",
+    "entryPoint": "AzureWeatherImageApp.Functions.StaticWebsiteFunction.HomePage",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "req",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get"
+        ],
+        "route": "",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "ServeWebsite",
+    "scriptFile": "ssp.dll",
+    "entryPoint": "AzureWeatherImageApp.Functions.StaticWebsiteFunction.ServeWebsite",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "req",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get"
+        ],
+        "route": "ServeWebsite",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "GetJobStatus",
+    "scriptFile": "ssp.dll",
+    "entryPoint": "WeatherImageApp.Functions.GetJobStatusFunction.Run",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "req",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get"
+        ],
+        "route": "job/{jobId}",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "HealthCheck",
+    "scriptFile": "ssp.dll",
+    "entryPoint": "WeatherImageApp.Functions.HealthCheckFunction.Run",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "req",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get"
+        ],
+        "route": "health",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "JobInitiator",
+    "scriptFile": "ssp.dll",
+    "entryPoint": "WeatherImageApp.Functions.JobInitiatorFunction.Run",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "jobMessage",
+        "direction": "In",
+        "type": "queueTrigger",
+        "dataType": "String",
+        "queueName": "job-start-queue",
+        "connection": "AzureWebJobsStorage",
+        "properties": {}
+      }
+    ]
+  },
+  {
+    "name": "ProcessImage",
+    "scriptFile": "ssp.dll",
+    "entryPoint": "WeatherImageApp.Functions.ProcessImageFunction.Run",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "messageText",
+        "direction": "In",
+        "type": "queueTrigger",
+        "dataType": "String",
+        "queueName": "image-processing-queue",
+        "connection": "AzureWebJobsStorage",
+        "properties": {}
+      }
+    ]
+  },
+  {
+    "name": "StartJob",
+    "scriptFile": "ssp.dll",
+    "entryPoint": "WeatherImageApp.Functions.StartJobFunction.Run",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "req",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "post"
+        ],
+        "route": "job/start",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "TestImageProcessing",
+    "scriptFile": "ssp.dll",
+    "entryPoint": "WeatherImageApp.Functions.TestImageProcessingFunction.Run",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "req",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get"
+        ],
+        "route": "test/image",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  }
+]
