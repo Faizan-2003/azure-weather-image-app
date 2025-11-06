@@ -995,9 +995,26 @@
             // View a job from history
             function viewJobFromHistory(jobId) {
                 currentJobId = jobId;
+                
+                // Update the status endpoint link
+                const statusUrl = `${API_BASE_URL}/api/job/${jobId}`;
+                const statusLink = document.getElementById("statusEndpointLink");
+                if (statusLink) {
+                    statusLink.innerHTML = `
+                        <a href="${statusUrl}" 
+                           target="_blank" 
+                           onclick="checkJobStatus(); return false;"
+                           style="color: #667eea; text-decoration: none; font-weight: bold;">
+                             ${statusUrl}
+                        </a>
+                        <span style="color: #28a745; margin-left: 10px;">Click to check status</span>
+                    `;
+                }
+                
+                // Switch to current tab and load the job
                 switchTab('current');
-                checkJobStatus();
                 document.getElementById('checkStatusBtn').disabled = false;
+                checkJobStatus();
             }
         </script>
     </body>
