@@ -351,3 +351,6 @@ This project is created for educational purposes as part of a cloud computing as
 
 <!-- Deployment trigger -->
 
+
+<!-- Deploy with WEBSITE_RUN_FROM_PACKAGE=0 -->
+
