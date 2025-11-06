@@ -30,7 +30,8 @@ public class TableStorageService : ITableStorageService
             ImagesJson = "[]"
         };
 
-        await tableClient.AddEntityAsync(entity);
+        // Use UpsertEntity to handle both create and update scenarios
+        await tableClient.UpsertEntityAsync(entity, TableUpdateMode.Replace);
     }
 
     public async Task<JobStatusEntity?> GetJobAsync(string jobId)

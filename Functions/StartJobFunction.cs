@@ -40,6 +40,9 @@ public class StartJobFunction
 
             _logger.LogInformation($"Creating job {jobId}");
 
+            // Create initial job entry in table storage
+            await _tableStorageService.CreateJobAsync(jobId, 0);
+
             // Enqueue job start message to job-start-queue
             // The JobInitiatorFunction will fetch stations and fan out to image-processing-queue
             var jobStartMessage = new JobStartMessage
