@@ -337,14 +337,14 @@
                             >https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net</code
                         >
                     </p>
-                    <p><strong>Health:</strong> <code>GET /api/health</code></p>
+                    <p><strong>Health:</strong> <code>GET /health</code></p>
                     <p>
                         <strong>Start Job:</strong>
-                        <code>POST /api/job/start</code>
+                        <code>POST /job/start</code>
                     </p>
                     <p>
                         <strong>Check Status:</strong>
-                        <code>GET /api/job/{jobId}</code>
+                        <code>GET /job/{jobId}</code>
                     </p>
                 </div>
             </div>
@@ -378,7 +378,7 @@
                 showStatus("🔄 Testing health endpoint...", "info");
 
                 try {
-                    const response = await fetch(`${API_BASE_URL}/api/health`, {
+                    const response = await fetch(`${API_BASE_URL}/health`, {
                         headers: {
                             "X-API-Key": getApiKey(),
                         },
@@ -409,16 +409,13 @@
                 document.getElementById("imageGallery").innerHTML = "";
 
                 try {
-                    const response = await fetch(
-                        `${API_BASE_URL}/api/job/start`,
-                        {
-                            method: "POST",
-                            headers: {
-                                "X-API-Key": getApiKey(),
-                                "Content-Type": "application/json",
-                            },
-                        }
-                    );
+                    const response = await fetch(`${API_BASE_URL}/job/start`, {
+                        method: "POST",
+                        headers: {
+                            "X-API-Key": getApiKey(),
+                            "Content-Type": "application/json",
+                        },
+                    });
 
                     if (response.ok) {
                         const data = await response.json();
@@ -461,7 +458,7 @@
 
                 try {
                     const response = await fetch(
-                        `${API_BASE_URL}/api/job/${currentJobId}`,
+                        `${API_BASE_URL}/job/${currentJobId}`,
                         {
                             headers: {
                                 "X-API-Key": getApiKey(),
