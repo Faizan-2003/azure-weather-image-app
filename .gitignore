@@ -40,14 +40,21 @@ artifacts/
 **/Properties/launchSettings.json
 
 # Azure Functions
-__blobstorage__
-__queuestorage__
+__blobstorage__/
+__queuestorage__/
 .python_packages/
 
 # Azurite - local storage emulator files
-azurite/__azurite_db*__.json
-azurite/__blobstorage__/
-azurite/__queuestorage__/
+azurite/
+
+# Deployment files
+publish/
+deploy.zip
+*.zip
+
+# Temporary files
+*.tmp
+*.temp
 azurite/debug.log
 azurite/*.json
 
