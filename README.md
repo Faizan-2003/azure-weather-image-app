@@ -1,7 +1,9 @@
 ## Azure Weather Image Application
 
 Student: Muhammad Faizan
+
 Student Number: 701765
+
 Repository: github.com/Faizan-2003/azure-weather-image-app
 
 Live App: weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/ServeWebsite
@@ -40,6 +42,8 @@ Infrastructure as Code (Bicep)
 
 Interactive web UI for testing
 
+---
+
 ## Live Demo
 
 Web Interface:
@@ -58,6 +62,8 @@ Endpoint Method Auth Description
 /api/GetJobStatus?jobId={id} GET ✅ Yes Gets job progress & results
 /api/test/image GET ❌ No Generates a test image
 
+---
+
 ## Quick Start
 
 Using cURL
@@ -71,6 +77,8 @@ https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/StartJob
 
 curl -H "X-API-Key: test-api-key-12345" \
 "https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/GetJobStatus?jobId={jobId}"
+
+---
 
 ## Architecture
 
@@ -93,6 +101,8 @@ Application Insights
 GitHub Actions (CI/CD)
 
 Bicep (Infrastructure Deployment)
+
+---
 
 ## Local Development
 
@@ -118,6 +128,8 @@ func start
 Then open http://localhost:7071/api/ServeWebsite
 .
 
+---
+
 ## Deployment
 
 Option 1: GitHub Actions (CI/CD)
@@ -126,6 +138,8 @@ Push to main → GitHub Actions automatically deploys via .github/workflows/azur
 
 Option 2: Manual (PowerShell)
 .\deploy.ps1 -ResourceGroupName "rg-weather" -Location "swedencentral" -ApiKey "your-api-key"
+
+---
 
 ## Azure Resources
 
@@ -136,6 +150,8 @@ Blob Container weather-images Image storage
 Queue job-start-queue / image-processing-queue Job orchestration
 Table JobStatus Job tracking
 Application Insights weather-image-func-insights Monitoring & logging
+
+---
 
 ## Tech Stack
 
@@ -150,6 +166,8 @@ Infrastructure: Azure Bicep
 Automation: GitHub Actions
 
 Storage: Azure Storage SDK v12
+
+---
 
 ## Example Responses
 
@@ -174,6 +192,8 @@ Job Status (In Progress)
 ]
 }
 
+---
+
 ## Troubleshooting
 
 Issue Solution
@@ -181,5 +201,7 @@ Unauthorized: Invalid API key Use header X-API-Key: test-api-key-12345
 Job stuck at “InProgress” Check Application Insights logs
 Images not visible SAS tokens expire after 1 hour — refresh job status
 Local Storage Errors Ensure Azurite is running
+
+---
 
 © 2025 Muhammad Faizan – Azure / GitHub Assignment
