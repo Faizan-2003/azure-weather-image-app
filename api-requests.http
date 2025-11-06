@@ -1,0 +1,148 @@
+### Azure Weather Image Application - API Documentation
+### Student: Muhammad Faizan (#701765)
+### Base URL: https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net
+### API Key: test-api-key-12345
+
+#############################################
+# Public Endpoints (No Authentication)
+#############################################
+
+### 1. Health Check
+GET https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/health
+
+### 2. Web Interface
+GET https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/ServeWebsite
+
+### 3. Test Image Processing
+GET https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/test/image
+
+#############################################
+# Protected Endpoints (Require API Key)
+#############################################
+
+### 4. Start Weather Job (Main Entry Point)
+POST https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/StartJob
+X-API-Key: test-api-key-12345
+
+### Expected Response:
+# {
+#   "jobId": "guid-here",
+#   "status": "InProgress",
+#   "message": "Job started. Processing 50 weather stations."
+# }
+
+### 5. Get Job Status (Check Progress)
+# Replace {jobId} with actual Job ID from StartJob response
+GET https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/job/86d70422-0db9-4ee9-842b-c6a293ca20b3
+X-API-Key: test-api-key-12345
+
+### Expected Response:
+# {
+#   "jobId": "guid-here",
+#   "status": "Completed",
+#   "totalStations": 50,
+#   "processedStations": 50,
+#   "images": [
+#     {
+#       "stationName": "Amsterdam",
+#       "imageUrl": "https://...blob.core.windows.net/...?sastoken",
+#       "temperature": 15.2,
+#       "weatherDescription": "Partly Cloudy"
+#     }
+#   ]
+# }
+
+### 6. Get Job History (All Past Jobs)
+GET https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/jobs/history
+X-API-Key: test-api-key-12345
+
+### Expected Response:
+# [
+#   {
+#     "partitionKey": "job-id",
+#     "status": "Completed",
+#     "createdAt": "2025-11-06T19:33:25Z",
+#     "totalStations": 50,
+#     "processedStations": 50
+#   }
+# ]
+
+#############################################
+# Local Development Endpoints
+#############################################
+
+### Health Check (Local)
+GET http://localhost:7071/api/health
+
+### Start Job (Local)
+POST http://localhost:7071/api/StartJob
+X-API-Key: test-api-key-12345
+
+### Get Job Status (Local)
+GET http://localhost:7071/api/job/{jobId}
+X-API-Key: test-api-key-12345
+
+### Web Interface (Local)
+GET http://localhost:7071/api/ServeWebsite
+
+#############################################
+# Architecture Overview
+#############################################
+
+# Flow:
+# 1. Client calls POST /api/StartJob with API Key
+# 2. StartJobFunction creates job in Table Storage
+# 3. StartJobFunction sends message to "job-start-queue"
+# 4. JobInitiatorFunction (QueueTrigger) picks up message
+# 5. JobInitiatorFunction fetches 50 stations from Buienradar API
+# 6. JobInitiatorFunction sends 50 messages to "image-processing-queue"
+# 7. ProcessImageFunction (QueueTrigger) processes each station:
+#    - Fetches random image from Unsplash API
+#    - Draws weather data on image using ImageSharp
+#    - Uploads image to Blob Storage
+#    - Generates SAS token for secure access
+#    - Updates job progress in Table Storage
+# 8. Client polls GET /api/job/{jobId} to check progress
+# 9. When all 50 stations processed, job status = "Completed"
+# 10. Client displays all images with SAS URLs
+
+#############################################
+# Azure Resources
+#############################################
+
+# Function App: weather-image-func-eg2kg4p2kzwtc
+# Storage Account: stweathereg2kg4p2kzwtc
+# Blob Container: weather-images
+# Queue 1: job-start-queue
+# Queue 2: image-processing-queue
+# Table: JobStatus
+# Region: Sweden Central
+
+#############################################
+# Authentication
+#############################################
+
+# All endpoints except HealthCheck, ServeWebsite, and test/image
+# require X-API-Key header with value: test-api-key-12345
+# 
+# Example using cURL:
+# curl -H "X-API-Key: test-api-key-12345" \
+#   https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/StartJob
+
+#############################################
+# Rate Limits & Performance
+#############################################
+
+# - Buienradar API: No rate limit (public feed)
+# - Unsplash API: 50 requests/hour (Demo mode)
+# - Processing time: ~2-3 minutes for 50 stations
+# - Blob SAS tokens: Valid for 1 hour
+# - Function timeout: 5 minutes (default)
+
+#############################################
+# Error Handling
+#############################################
+
+# 401 Unauthorized: Missing or invalid API key
+# 404 Not Found: Job ID doesn't exist
+# 500 Internal Server Error: Processing failed
