@@ -1,4 +1,4 @@
-namespace WeatherImageApp.Services;
+namespace WeatherImageApp.Services.Interfaces;
 
 public interface IQueueService
 {

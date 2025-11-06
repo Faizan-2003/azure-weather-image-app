@@ -5,6 +5,7 @@ using System.Net;
 using System.Text.Json;
 using WeatherImageApp.Models;
 using WeatherImageApp.Services;
+using WeatherImageApp.Services.Interfaces;
 
 namespace WeatherImageApp.Functions;
 

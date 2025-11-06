@@ -1,6 +1,6 @@
 using WeatherImageApp.Models;
 
-namespace WeatherImageApp.Services;
+namespace WeatherImageApp.Services.Interfaces;
 
 public interface ITableStorageService
 {

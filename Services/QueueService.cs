@@ -1,5 +1,6 @@
 using Azure.Storage.Queues;
 using System.Text;
+using WeatherImageApp.Services.Interfaces;
 
 namespace WeatherImageApp.Services;
 

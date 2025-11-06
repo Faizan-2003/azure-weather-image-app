@@ -6,6 +6,7 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Queues;
 using Azure.Data.Tables;
 using WeatherImageApp.Services;
+using WeatherImageApp.Services.Interfaces;
 using WeatherImageApp.Middleware;
 
 var host = new HostBuilder()

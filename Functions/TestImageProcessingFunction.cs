@@ -3,6 +3,7 @@ using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using System.Net;
 using WeatherImageApp.Services;
+using WeatherImageApp.Services.Interfaces;
 
 namespace WeatherImageApp.Functions;
 

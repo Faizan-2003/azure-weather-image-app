@@ -1,5 +1,6 @@
 using System.Text.Json;
 using WeatherImageApp.Models;
+using WeatherImageApp.Services.Interfaces;
 
 namespace WeatherImageApp.Services;
 

@@ -6,6 +6,7 @@ using SixLabors.Fonts;
 using Microsoft.Extensions.Configuration;
 using WeatherImageApp.Models;
 using System.Text.Json;
+using WeatherImageApp.Services.Interfaces;
 
 namespace WeatherImageApp.Services;
 
