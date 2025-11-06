@@ -1,188 +1,325 @@
-# Azure Weather Image Application# Azure Weather Image Application# Azure Weather Image Application# Weather Image Application - Azure Functions
+# Azure Weather Image Application# Azure Weather Image Application
 
-**Student:** Muhammad Faizan | **Number:** 701765 **Student:** Muhammad Faizan **Student:** Muhammad Faizan **Student Name:** Muhammad Faizan
-
-**Repository:** https://github.com/Faizan-2003/azure-weather-image-app
+**Student:** Muhammad Faizan **Student:** Muhammad Faizan | **Number:** 701765
 
 **Student Number:** 701765
 
----
+**GitHub:** [https://github.com/Faizan-2003/azure-weather-image-app](https://github.com/Faizan-2003/azure-weather-image-app)---
 
-**GitHub:** [https://github.com/Faizan-2003/azure-weather-image-app](https://github.com/Faizan-2003/azure-weather-image-app)**Student Number:** 701765 **Student Number:** 701765
+---## 📋 What It Does
 
-## 📋 What It Does
+## 📋 OverviewServerless Azure Functions app that generates weather images for Dutch weather stations:
 
----**GitHub Repository:** [https://github.com/Faizan-2003/azure-weather-image-app](https://github.com/Faizan-2003/azure-weather-image-app)**GitHub Repository:** https://github.com/Faizan-2003/azure-weather-image-app
+A serverless Azure Functions application that generates weather-themed images for 50 Dutch weather stations using real-time data from Buienradar API.- Fetches real-time weather from Buienradar API## 📋 Overview---
 
-Serverless Azure Functions app that generates weather images for Dutch weather stations:
+## 🚀 Live Demo- Generates images with weather overlays
 
--   Fetches real-time weather from Buienradar API## 📋 Overview---
+**🌐 Web Interface:** [https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/ServeWebsite](https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/ServeWebsite)- Uses Queue Storage for background processingA serverless Azure Functions application that generates weather-themed images for Dutch weather stations using real-time data from Buienradar API.## 📋 Project Description - A serverless application built with Azure Functions that generates weather-themed images for Dutch weather stations. The application fetches real-time weather data from Buienradar API and overlays it on beautiful background images.
 
--   Generates images with weather overlays
+-   ✅ No setup required - just click "Start Weather Job"- Stores images in Blob Storage
 
--   Uses Queue Storage for background processingA serverless Azure Functions application that generates weather-themed images for Dutch weather stations using real-time data from Buienradar API.## 📋 Project Description - A serverless application built with Azure Functions that generates weather-themed images for Dutch weather stations. The application fetches real-time weather data from Buienradar API and overlays it on beautiful background images.
+-   ✅ Real-time progress tracking
 
--   Stores images in Blob Storage
+-   ✅ View generated weather images- Tracks jobs in Table Storage## 🚀 Live DemoA serverless Azure Functions application that generates weather-themed images for Dutch weather stations. The application:## 🌟 Features
 
--   Tracks jobs in Table Storage## 🚀 Live DemoA serverless Azure Functions application that generates weather-themed images for Dutch weather stations. The application:## 🌟 Features
+-   ✅ API key pre-configured
 
 ## 🚀 Live Demo**🌐 Web Interface:** [https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/ServeWebsite](https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/ServeWebsite)- Fetches real-time weather data from Buienradar API
 
+## 🏗️ Architecture
+
 **Web UI:** https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/ServeWebsite- ✅ No setup required - just open and click "Start Weather Job"- Generates images with weather information overlays- **HTTP API** for starting jobs and checking status
 
-Just open the link and click "Start Weather Job" - everything is pre-configured!- ✅ Real-time progress tracking
+```
 
-## 📡 API Endpoints- ✅ View generated weather images- Uses Azure Queue Storage for scalable background processing- **Queue-based processing** for scalable background image generation
+Client → StartJob → job-start-queue → JobInitiatorJust open the link and click "Start Weather Job" - everything is pre-configured!- ✅ Real-time progress tracking
 
-| Endpoint | Method | Auth | Description |- ✅ API key pre-configured
+                         ↓
 
-|----------|--------|------|-------------|
+                   Creates 50 messages## 📡 API Endpoints- ✅ View generated weather images- Uses Azure Queue Storage for scalable background processing- **Queue-based processing** for scalable background image generation
 
-| `/api/HealthCheck` | GET | No | Health check |- Stores images in Azure Blob Storage with SAS token access- **Blob Storage** for secure image storage with SAS token access
+                         ↓
 
-| `/api/StartJob` | POST | Yes | Start job |
+              image-processing-queue| Endpoint | Method | Auth | Description |- ✅ API key pre-configured
+
+                         ↓
+
+                  ProcessImage (parallel)|----------|--------|------|-------------|
+
+                         ↓
+
+              Blob Storage + Table Storage| `/api/HealthCheck` | GET | No | Health check |- Stores images in Azure Blob Storage with SAS token access- **Blob Storage** for secure image storage with SAS token access
+
+                         ↓
+
+                   GetJobStatus| `/api/StartJob` | POST | Yes | Start job |
+
+```
 
 | `/api/GetJobStatus?jobId={id}` | GET | Yes | Check status |## 🎯 Features
 
+## 📡 API Endpoints
+
 **API Key:** `test-api-key-12345` (use as `X-API-Key` header)- Tracks job status using Azure Table Storage- **Table Storage** for persistent job tracking
-
-## 🛠️ Quick Test## 🏗️ Architecture
-
-````bash ││   Client    │
-
-# Start a job
-
-curl -X POST -H "X-API-Key: test-api-key-12345" \```
-
-  https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/StartJob
-
-Client → StartJob → job-start-queue → JobInitiator         │ POST /api/StartJob└──────┬──────┘
-
-# Check status (replace {jobId})
-
-curl -H "X-API-Key: test-api-key-12345" \                          ↓
-
-  "https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/GetJobStatus?jobId={jobId}"
-
-```                  Creates 10 messages         ▼       │
-
-
-
-## 🏗️ Architecture                          ↓
-
-
-
-```              image-processing-queue┌──────────────────────┐         ┌────────────────────┐       │ POST /api/job/start
-
-Client → StartJob → job-start-queue → JobInitiator
-
-                         ↓                          ↓
-
-                   10 messages
-
-                         ↓                 ProcessImageFunction│ StartJobFunction     ├────────►│ job-start-queue    │       ▼
-
-              image-processing-queue
-
-                         ↓                    ↓           ↓
-
-                  ProcessImage (parallel)
-
-                         ↓              Blob Storage   Table Storage│ (Creates job entry)  │         └─────────┬──────────┘┌─────────────────┐         ┌──────────────┐
-
-                   Blob Storage
-
-                         ↓                              ↓
-
-                  Table Storage ← GetJobStatus
-
-```                         GetJobStatus└──────────────────────┘                   ││ StartJobFunction├────────►│ Queue Storage│
-
-
-
-## 📦 Azure Resources```
-
-
-
-- **Function App:** weather-image-func-eg2kg4p2kzwtc         │                                  │└─────────────────┘         └──────┬───────┘
-
-- **Storage:** stweathereg2kg4p2kzwtc
-
-- **Region:** Sweden Central## 📡 API Endpoints
-
-- **Resource Group:** StudentGroup
-
-         │                                  ▼       │                           │
-
-## ✅ Assignment Requirements
 
 | Endpoint | Method | Auth | Description |
 
-- [x] Multiple Azure Functions (7 total)
+|----------|--------|------|-------------|## 🛠️ Quick Test## 🏗️ Architecture
 
-- [x] Queue Storage (2 queues)|----------|--------|------|-------------| │ ┌────────────────────┐ │ │ Messages (50)
+| `/api/HealthCheck` | GET | No | Health check |
 
-- [x] Blob Storage (image storage)
+| `/api/ServeWebsite` | GET | No | Web UI |````bash ││ Client │
 
-- [x] Table Storage (job tracking)| `/api/HealthCheck` | GET | No | Health status |
+| `/api/StartJob` | POST | Yes | Start job |
 
-- [x] API Key authentication
-
-- [x] SAS tokens for blobs| `/api/ServeWebsite` | GET | No | Web UI | │ │ JobInitiatorFunction│ ▼ ▼
-
-- [x] Fan-out/fan-in pattern
-
-- [x] Bicep IaC template| `/api/StartJob` | POST | Yes | Start job |
-
-- [x] deploy.ps1 script
-
-- [x] GitHub Actions CI/CD| `/api/GetJobStatus?jobId={id}` | GET | Yes | Job status | │ │ (Fan-out pattern) │┌─────────────────┐ ┌──────────────────┐
-
-- [x] Web UI for testing
+| `/api/GetJobStatus?jobId={id}` | GET | Yes | Check status |# Start a job
 
 | `/api/test/image` | GET | No | Test image |
 
-## 📁 Project Structure
+curl -X POST -H "X-API-Key: test-api-key-12345" \```
 
-         │                         └─────────┬───────────┘│ Table Storage   │◄────────┤ProcessImageFunction│
+**API Key:** `test-api-key-12345` (Header: `X-API-Key`)
+
+https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/StartJob
+
+## 🧪 Quick Test
+
+Client → StartJob → job-start-queue → JobInitiator │ POST /api/StartJob└──────┬──────┘
+
+### Using cURL:
+
+# Check status (replace {jobId})
+
+````bash
+
+# Start jobcurl -H "X-API-Key: test-api-key-12345" \                          ↓
+
+curl -X POST -H "X-API-Key: test-api-key-12345" \
+
+  https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/StartJob  "https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/GetJobStatus?jobId={jobId}"
+
+
+
+# Check status (replace {jobId})```                  Creates 10 messages         ▼       │
+
+curl -H "X-API-Key: test-api-key-12345" \
+
+  "https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/GetJobStatus?jobId={jobId}"
 
 ````
 
-├── Functions/ # 7 Azure Functions**API Key:** `test-api-key-12345` (Header: `X-API-Key`)
+## 🏗️ Architecture ↓
 
-├── Services/ # Business logic
+### Using PowerShell:
 
-├── Models/ # Data models │ ││ (Job State) │ └──────────┬─────────┘
+````powershell
 
-├── Middleware/ # API key auth
+$headers = @{ "X-API-Key" = "test-api-key-12345" }```              image-processing-queue┌──────────────────────┐         ┌────────────────────┐       │ POST /api/job/start
 
-├── wwwroot/ # Web UI## 🧪 Quick Test
+$job = Invoke-RestMethod -Method Post -Uri "https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/StartJob" -Headers $headers
 
-├── deploy/ # Bicep template
+Invoke-RestMethod -Uri "https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/GetJobStatus?jobId=$($job.JobId)" -Headers $headersClient → StartJob → job-start-queue → JobInitiator
 
-├── deploy.ps1 # Deployment script │ Creates 10 messages└─────────────────┘ │
+````
 
-└── .github/workflows/ # CI/CD
+                         ↓                          ↓
 
-`````### Using cURL:
+## 📦 Azure Resources
+
+                   10 messages
+
+-   **Function App:** weather-image-func-eg2kg4p2kzwtc (Windows, .NET 8)
+
+-   **Storage Account:** stweathereg2kg4p2kzwtc ↓ ProcessImageFunction│ StartJobFunction ├────────►│ job-start-queue │ ▼
+
+-   **Region:** Sweden Central
+
+-   **Resource Group:** StudentGroup image-processing-queue
+
+## ✅ Assignment Requirements ↓ ↓ ↓
+
+**All 16 requirements implemented:** ProcessImage (parallel)
+
+### MUST (12/12) ↓ Blob Storage Table Storage│ (Creates job entry) │ └─────────┬──────────┘┌─────────────────┐ ┌──────────────┐
+
+-   [x] Fetch weather data from Buienradar API
+
+-   [x] Multiple Azure Functions (7 total) Blob Storage
+
+-   [x] Queue Storage (2 queues)
+
+-   [x] Blob Storage (image storage) ↓ ↓
+
+-   [x] Table Storage (job tracking)
+
+-   [x] API Key authentication Table Storage ← GetJobStatus
+
+-   [x] SAS tokens for blobs
+
+-   [x] Fan-out/fan-in pattern``` GetJobStatus└──────────────────────┘ ││ StartJobFunction├────────►│ Queue Storage│
+
+-   [x] Bicep IaC template
+
+-   [x] deploy.ps1 script
+
+-   [x] GitHub Actions CI/CD
+
+-   [x] Comprehensive documentation## 📦 Azure Resources```
+
+### COULD (4/4)
+
+-   [x] Additional endpoints (HealthCheck, TestImage)
+
+-   [x] Web UI for testing- **Function App:** weather-image-func-eg2kg4p2kzwtc │ │└─────────────────┘ └──────┬───────┘
+
+-   [x] Application Insights monitoring
+
+-   [x] Error handling & retry logic- **Storage:** stweathereg2kg4p2kzwtc
+
+## 🛠️ Local Development- **Region:** Sweden Central## 📡 API Endpoints
+
+```bash- **Resource Group:** StudentGroup
+
+# Clone repository
+
+git clone https://github.com/Faizan-2003/azure-weather-image-app.git         │                                  ▼       │                           │
+
+cd azure-weather-image-app
+
+## ✅ Assignment Requirements
+
+# Start Azurite (separate terminal)
+
+azurite --silent --location ./azurite| Endpoint | Method | Auth | Description |
 
 
 
-## 🚢 Deployment````bash │                                   │       ▲                               ▼
+# Build and run- [x] Multiple Azure Functions (7 total)
 
+dotnet restore
 
+dotnet build- [x] Queue Storage (2 queues)|----------|--------|------|-------------| │ ┌────────────────────┐ │ │ Messages (50)
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for deployment instructions.# Start job
+func start
 
+- [x] Blob Storage (image storage)
 
+# Open browser
 
-Quick deploy:curl -X POST -H "X-API-Key: test-api-key-12345" \         │                                   ▼       │                        ┌──────────────┐
+http://localhost:7071/api/ServeWebsite- [x] Table Storage (job tracking)| `/api/HealthCheck` | GET | No | Health status |
+
+```
+
+-   [x] API Key authentication
+
+## 🚢 Deployment
+
+-   [x] SAS tokens for blobs| `/api/ServeWebsite` | GET | No | Web UI | │ │ JobInitiatorFunction│ ▼ ▼
+
+### Option 1: GitHub Actions (Automated)
+
+Push to main branch → Auto-deploys via `.github/workflows/azure-deploy.yml`- [x] Fan-out/fan-in pattern
+
+### Option 2: Manual Script- [x] Bicep IaC template| `/api/StartJob` | POST | Yes | Start job |
 
 ```powershell
 
-.\deploy.ps1 -ResourceGroupName "rg-name" -Location "swedencentral" -ApiKey "your-key"  https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/StartJob
+.\deploy.ps1 -ResourceGroupName "rg-weather" -Location "swedencentral" -ApiKey "your-key"- [x] deploy.ps1 script
 
-`````
+```
+
+-   [x] GitHub Actions CI/CD| `/api/GetJobStatus?jobId={id}` | GET | Yes | Job status | │ │ (Fan-out pattern) │┌─────────────────┐ ┌──────────────────┐
+
+**What deploy.ps1 does:**
+
+1.  Creates resource group- [x] Web UI for testing
+
+2.  Deploys Bicep template (`deploy/main.bicep`)
+
+3.  Builds project (`dotnet build`)| `/api/test/image` | GET | No | Test image |
+
+4.  Publishes project (`dotnet publish`)
+
+5.  Creates ZIP package## 📁 Project Structure
+
+6.  Deploys to Azure Functions
+
+         │                         └─────────┬───────────┘│ Table Storage   │◄────────┤ProcessImageFunction│
+
+## 📁 Project Structure
+
+``````
+
+```
+
+├── Functions/              # 7 Azure Functions├── Functions/ # 7 Azure Functions**API Key:** `test-api-key-12345` (Header: `X-API-Key`)
+
+├── Services/               # Business logic
+
+├── Models/                 # Data models├── Services/ # Business logic
+
+├── Middleware/             # API key auth
+
+├── wwwroot/                # Web UI├── Models/ # Data models │ ││ (Job State) │ └──────────┬─────────┘
+
+├── deploy/                 # Bicep template
+
+├── deploy.ps1              # Deployment script├── Middleware/ # API key auth
+
+└── .github/workflows/      # CI/CD
+
+```├── wwwroot/ # Web UI## 🧪 Quick Test
+
+
+
+## 🔧 Technologies├── deploy/ # Bicep template
+
+
+
+- .NET 8 Isolated Worker├── deploy.ps1 # Deployment script │ Creates 10 messages└─────────────────┘ │
+
+- Azure Functions v4
+
+- SixLabors.ImageSharp└── .github/workflows/ # CI/CD
+
+- Azure Storage SDK v12
+
+- Bicep IaC`````### Using cURL:
+
+- GitHub Actions
+
+
+
+## 🐛 Troubleshooting
+
+## 🚢 Deployment````bash │                                   │       ▲                               ▼
+
+**"Unauthorized" error?**
+
+→ Include header: `X-API-Key: test-api-key-12345`
+
+
+
+**Images not loading?**  See [DEPLOYMENT.md](DEPLOYMENT.md) for deployment instructions.# Start job
+
+→ SAS tokens expire after 1 hour. Refresh job status.
+
+
+
+**Local development issues?**
+
+→ Ensure Azurite is running: `azurite --silent`Quick deploy:curl -X POST -H "X-API-Key: test-api-key-12345" \         │                                   ▼       │                        ┌──────────────┐
+
+
+
+---```powershell
+
+
+
+**© 2025 Muhammad Faizan - Cloud Computing Assignment**.\deploy.ps1 -ResourceGroupName "rg-name" -Location "swedencentral" -ApiKey "your-key"  https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/StartJob
+
+
+``````
 
          │                         ┌─────────────────────┐       │                        │ Blob Storage │
 

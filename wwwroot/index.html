@@ -362,7 +362,6 @@
                                     margin-top: 5px;
                                 "
                             >
-                                🔗
                                 https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/health
                             </a>
                             <span style="color: #28a745; margin-left: 10px"
@@ -371,7 +370,7 @@
                         </p>
 
                         <p style="margin-bottom: 15px">
-                            <strong>🚀 Start Job:</strong><br />
+                            <strong> Start Job:</strong><br />
                             <code
                                 style="
                                     background: white;
@@ -397,14 +396,6 @@
                             >
                                 Click Here to Start Job
                             </button>
-                            <span
-                                style="
-                                    color: #ffc107;
-                                    margin-left: 10px;
-                                    font-size: 0.9em;
-                                "
-                                >POST requests need button click</span
-                            >
                         </p>
 
                         <p style="margin-bottom: 15px">
@@ -665,10 +656,10 @@
 
                 // Update status message
                 let statusMessage = `
-                <strong>🆔 Job ID:</strong> ${jobId}<br>
-                <strong>📊 Job Status:</strong> ${status}<br>
-                <strong>🎯 Progress:</strong> ${processedStations} / ${totalStations} stations<br>
-                <strong>❌ Failed:</strong> ${failedStations || 0}
+                <strong> Job ID:</strong> ${jobId}<br>
+                <strong> Job Status:</strong> ${status}<br>
+                <strong> Progress:</strong> ${processedStations} / ${totalStations} stations<br>
+                <strong> Failed:</strong> ${failedStations || 0}
             `;
 
                 if (status === "Completed") {
