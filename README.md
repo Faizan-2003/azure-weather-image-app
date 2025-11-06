@@ -12,6 +12,7 @@ A serverless application built with Azure Functions that generates weather-theme
 -   **Automatic fan-out pattern** - processes 50 weather stations in parallel
 -   **Real-time weather data** from Buienradar Netherlands
 -   **Beautiful image composition** using ImageSharp library
+-   **GitHub Actions CI/CD** for automated deployment 🚀
 
 ## 📋 Architecture
 
@@ -183,7 +184,45 @@ Returns a JPEG image directly in the response.
 
 ## 🌐 Deployment to Azure
 
-### Option 1: Using the Deployment Script (Recommended)
+### Option 1: GitHub Actions (Automated) ⭐ Recommended
+
+The project includes GitHub Actions workflows for automated deployment!
+
+**Setup Steps:**
+
+1. **Create Azure Service Principal**
+
+    ```bash
+    az ad sp create-for-rbac \
+      --name "github-actions-weather-app" \
+      --role contributor \
+      --scopes /subscriptions/{subscription-id} \
+      --sdk-auth
+    ```
+
+2. **Add GitHub Secrets**
+
+    - Go to your repo → Settings → Secrets and variables → Actions
+    - Add `AZURE_CREDENTIALS` (JSON output from step 1)
+    - Add `AZURE_SUBSCRIPTION_ID`
+
+3. **Deploy Infrastructure**
+
+    - Go to GitHub Actions tab
+    - Run "Deploy Azure Infrastructure" workflow
+    - Provide API key and other parameters
+
+4. **Configure App Deployment**
+
+    - Update `AZURE_FUNCTIONAPP_NAME` in `.github/workflows/azure-deploy.yml`
+    - Add `AZURE_FUNCTIONAPP_PUBLISH_PROFILE` secret (download from Azure Portal)
+
+5. **Push to Main** - Automatic deployment on every push! 🚀
+
+📖 **Detailed Setup:** [GITHUB_ACTIONS_SETUP.md](GITHUB_ACTIONS_SETUP.md)  
+📖 **Quick Reference:** [.github/workflows/README.md](.github/workflows/README.md)
+
+### Option 2: PowerShell Script (Quick Deploy)
 
 ```powershell
 .\deploy.ps1 `
@@ -201,7 +240,7 @@ The script will:
 4. Package the application
 5. Deploy to Azure Functions
 
-### Option 2: Manual Deployment
+### Option 3: Manual Deployment
 
 1. **Login to Azure**
 
