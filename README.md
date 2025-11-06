@@ -275,9 +275,11 @@ Generates a test image for debugging.
 ## 🌐 Live Deployment
 
 **🎨 INTERACTIVE WEB UI (For Your Teacher):**  
-👉 **https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/ServeWebsite** 👈
+👉 **https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api** 👈
 
 **Open this link in Chrome - No API key needed! Test everything with buttons and see real-time results!**
+
+_(Alternative URL: https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/servewebsite)_
 
 ---
 
