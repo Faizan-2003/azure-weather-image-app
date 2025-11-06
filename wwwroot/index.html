@@ -566,15 +566,28 @@
 
                     if (response.ok) {
                         const data = await response.json();
-                        currentJobId = data.jobId;
+
+                        // Handle both camelCase and PascalCase from API
+                        const jobId = data.jobId || data.JobId;
+                        const status = data.status || data.Status;
+                        const message = data.message || data.Message;
+
+                        currentJobId = jobId;
+
+                        console.log("Job started:", {
+                            jobId,
+                            status,
+                            message,
+                            rawData: data,
+                        });
 
                         showStatus(
-                            `✅ Job Started Successfully!<br><strong>Job ID:</strong> ${data.jobId}<br><strong>Status:</strong> ${data.status}`,
+                            `✅ Job Started Successfully!<br><strong>Job ID:</strong> ${jobId}<br><strong>Status:</strong> ${status}<br><strong>Message:</strong> ${message}`,
                             "success"
                         );
 
                         // Update the status endpoint link with the actual job ID
-                        const statusUrl = `${API_BASE_URL}/api/job/${data.jobId}`;
+                        const statusUrl = `${API_BASE_URL}/api/job/${jobId}`;
                         document.getElementById(
                             "statusEndpointLink"
                         ).innerHTML = `
