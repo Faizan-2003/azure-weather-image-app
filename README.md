@@ -354,3 +354,6 @@ This project is created for educational purposes as part of a cloud computing as
 
 <!-- Deploy with WEBSITE_RUN_FROM_PACKAGE=0 -->
 
+
+<!-- Deploy to Windows Function App -->
+
