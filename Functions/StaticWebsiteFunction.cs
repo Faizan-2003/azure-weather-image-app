@@ -14,6 +14,14 @@ namespace AzureWeatherImageApp.Functions
             _logger = logger;
         }
 
+        [Function("HomePage")]
+        public async Task<HttpResponseData> HomePage(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "")] HttpRequestData req)
+        {
+            _logger.LogInformation("Serving homepage at root");
+            return await ServeHtmlPage(req);
+        }
+        
         [Function("ServeWebsite")]
         public async Task<HttpResponseData> ServeWebsite(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "ServeWebsite")] HttpRequestData req)
