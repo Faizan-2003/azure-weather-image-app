@@ -800,8 +800,11 @@
                         ? ((processedStations / totalStations) * 100).toFixed(1)
                         : 0;
                 const progressFill = document.getElementById("progressFill");
+                const progressBar = document.getElementById("progressBar");
+                
                 progressFill.style.width = `${progress}%`;
                 progressFill.textContent = `${progress}% (${processedStations}/${totalStations})`;
+                progressBar.classList.add("show"); // Always show progress bar when viewing job status
 
                 // Update status message
                 let statusMessage = `
