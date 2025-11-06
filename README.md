@@ -84,13 +84,19 @@ Steps:
 git clone https://github.com/Faizan-2003/azure-weather-image-app.git
 cd azure-weather-image-app
 
-azurite --silent --location ./azurite # Start local storage
+# Terminal 1: Start Azurite (local storage emulator)
+
+npx azurite --silent --location ./azurite
+
+# Terminal 2: Build and start the Functions app
+
 dotnet restore
 dotnet build
-func start
+./start.ps1
 
-Then open http://localhost:7071/api/ServeWebsite
-.
+# Terminal 3: Run the test
+
+./test-local.ps1
 
 ---
 
