@@ -16,7 +16,7 @@
     },
     "extensions": {
         "http": {
-            "routePrefix": ""
+            "routePrefix": "api"
         },
         "queues": {
             "batchSize": 16,

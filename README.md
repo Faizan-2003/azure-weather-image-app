@@ -274,21 +274,57 @@ Generates a test image for debugging.
 
 ## 🌐 Live Deployment
 
-**Function App URL:** https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net  
-**🎨 Web Interface (UI for Testing):** https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/ui  
+**🎨 INTERACTIVE WEB UI (For Your Teacher):**  
+👉 **https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/** 👈
+
+**Open this link in Chrome - No API key needed! Test everything with buttons and see real-time results!**
+
+---
+
+**Function App Base URL:** https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net  
 **Region:** Sweden Central  
 **Resource Group:** StudentGroup
 
-### 📋 Available API Endpoints
+### 📋 How to Test This Application
+
+#### Option 1: 🎨 Web Interface (RECOMMENDED for Teachers)
+
+Simply open in your browser:
+
+```
+https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/
+```
+
+Features:
+
+-   ✅ No API key configuration needed
+-   ✅ Visual buttons to test all endpoints
+-   ✅ Real-time progress bar
+-   ✅ Image gallery showing generated weather images
+-   ✅ Beautiful UI showing all functionality
+
+#### Option 2: 🔧 Direct API Calls (For Developers)
+
+All API endpoints require `X-API-Key: test-api-key-12345` header.
+
+**Available Endpoints:**
 
 -   `GET /health` - Health check endpoint
 -   `POST /job/start` - Start weather image generation job
 -   `GET /job/{jobId}` - Check job status and get results
--   `GET /ui` - Interactive web interface for testing
 
-### 🔑 Authentication
+**Example using curl:**
 
-All API endpoints (except `/ui`) require `X-API-Key: test-api-key-12345` header.
+```bash
+# Health Check
+curl -H "X-API-Key: test-api-key-12345" https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/health
+
+# Start Job
+curl -X POST -H "X-API-Key: test-api-key-12345" -H "Content-Type: application/json" https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/job/start
+
+# Check Status
+curl -H "X-API-Key: test-api-key-12345" https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/job/{jobId}
+```
 
 ### 📦 Azure Resources
 
