@@ -77,4 +77,20 @@ public class TableStorageService : ITableStorageService
 
         await tableClient.UpdateEntityAsync(entity, entity.ETag, TableUpdateMode.Replace);
     }
+
+    public async Task<List<JobStatusEntity>> GetAllJobsAsync()
+    {
+        var tableClient = _tableServiceClient.GetTableClient(TableName);
+        await tableClient.CreateIfNotExistsAsync();
+
+        var jobs = new List<JobStatusEntity>();
+        
+        await foreach (var entity in tableClient.QueryAsync<JobStatusEntity>())
+        {
+            jobs.Add(entity);
+        }
+
+        // Sort by creation time, most recent first
+        return jobs.OrderByDescending(j => j.CreatedAt).ToList();
+    }
 }

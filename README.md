@@ -43,16 +43,15 @@ https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/ServeWebsite
 API Key: test-api-key-12345 (use as X-API-Key header)
 
 Quick Test:
-Click “Start Weather Job” — all configuration is preloaded.
+Click “Start Weather Job” - all configuration is preloaded.
 
 **API Endpoints**
 
--   Endpoint Method Auth Description
--   /api/HealthCheck GET ❌ No Basic health check
--   /api/ServeWebsite GET ❌ No Web UI for testing
--   /api/StartJob POST ✅ Yes Starts weather image job
--   /api/GetJobStatus?jobId={id} GET ✅ Yes Gets job progress & results
--   /api/test/image GET ❌ No Generates a test image
+-   /api/HealthCheck - GET
+-   /api/ServeWebsite - GET
+-   /api/StartJob - POST
+-   /api/GetJobStatus?jobId={id} - GET
+-   /api/test/image - GET
 
 ---
 

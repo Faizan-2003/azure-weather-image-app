@@ -266,6 +266,106 @@
                 padding: 20px;
             }
 
+            /* Tabs */
+            .tabs {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 20px;
+                border-bottom: 2px solid #e0e0e0;
+            }
+
+            .tab {
+                padding: 12px 24px;
+                cursor: pointer;
+                background: transparent;
+                border: none;
+                border-bottom: 3px solid transparent;
+                font-size: 1em;
+                font-weight: 600;
+                color: #666;
+                transition: all 0.3s;
+            }
+
+            .tab:hover {
+                color: #667eea;
+                transform: none;
+                box-shadow: none;
+            }
+
+            .tab.active {
+                color: #667eea;
+                border-bottom-color: #667eea;
+            }
+
+            .tab-content {
+                display: none;
+            }
+
+            .tab-content.active {
+                display: block;
+            }
+
+            .history-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 15px;
+            }
+
+            .history-table th,
+            .history-table td {
+                padding: 12px;
+                text-align: left;
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .history-table th {
+                background: #f8f9fa;
+                font-weight: 600;
+                color: #333;
+            }
+
+            .history-table tr:hover {
+                background: #f8f9fa;
+            }
+
+            .status-badge {
+                padding: 4px 12px;
+                border-radius: 12px;
+                font-size: 0.85em;
+                font-weight: 600;
+            }
+
+            .status-completed {
+                background: #d4edda;
+                color: #155724;
+            }
+
+            .status-inprogress {
+                background: #fff3cd;
+                color: #856404;
+            }
+
+            .status-failed {
+                background: #f8d7da;
+                color: #721c24;
+            }
+
+            .view-job-btn {
+                padding: 6px 12px;
+                background: #667eea;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 0.9em;
+            }
+
+            .view-job-btn:hover {
+                background: #5568d3;
+                transform: none;
+                box-shadow: none;
+            }
+
             @media (max-width: 768px) {
                 .button-group {
                     flex-direction: column;
@@ -278,6 +378,14 @@
                 .image-gallery {
                     grid-template-columns: 1fr;
                 }
+
+                .tabs {
+                    overflow-x: auto;
+                }
+
+                .history-table {
+                    font-size: 0.85em;
+                }
             }
         </style>
     </head>
@@ -289,6 +397,15 @@
             </div>
 
             <div class="card">
+                <!-- Tabs Navigation -->
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('current')"> Current Job</button>
+                    <button class="tab" onclick="switchTab('history')"> Job History</button>
+                    <button class="tab" onclick="switchTab('endpoints')"> API Endpoints</button>
+                </div>
+
+                <!-- Current Job Tab -->
+                <div id="currentTab" class="tab-content active">
                 <div class="api-key-section">
                     <label for="apiKey">API Key:</label>
                     <input
@@ -327,6 +444,23 @@
 
                 <div class="image-gallery" id="imageGallery"></div>
 
+                </div>
+                <!-- End Current Job Tab -->
+
+                <!-- History Tab -->
+                <div id="historyTab" class="tab-content">
+                    <h2 style="margin-bottom: 15px;">📜 Job History</h2>
+                    <button class="btn-info" onclick="loadJobHistory()" style="margin-bottom: 15px;">
+                        Refresh History
+                    </button>
+                    <div id="historyLoading" class="loading" style="display: none;">
+                        Loading job history...
+                    </div>
+                    <div id="historyContainer"></div>
+                </div>
+
+                <!-- Endpoints Tab -->
+                <div id="endpointsTab" class="tab-content">
                 <div class="endpoint-info">
                     <h3>API Endpoints (Click to Test):</h3>
                     <div
@@ -411,7 +545,7 @@
                                 >GET /api/job/{jobId}</code
                             ><br />
                             <span
-                                id="statusEndpointLink"
+                                id="statusEndpointLink2"
                                 style="color: #999; font-style: italic"
                             >
                                 Start a job first to get the Job ID
@@ -447,9 +581,6 @@
                             <span style="color: #28a745; margin-left: 10px"
                                 >This page!</span
                             >
-                        </p>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -735,6 +866,121 @@
             window.addEventListener("beforeunload", () => {
                 stopStatusPolling();
             });
+
+            // Tab switching function
+            function switchTab(tabName) {
+                // Hide all tabs
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                
+                // Remove active class from all tab buttons
+                document.querySelectorAll('.tab').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Show selected tab
+                if (tabName === 'current') {
+                    document.getElementById('currentTab').classList.add('active');
+                    document.querySelector('.tab:nth-child(1)').classList.add('active');
+                } else if (tabName === 'history') {
+                    document.getElementById('historyTab').classList.add('active');
+                    document.querySelector('.tab:nth-child(2)').classList.add('active');
+                    loadJobHistory(); // Auto-load history when tab is opened
+                } else if (tabName === 'endpoints') {
+                    document.getElementById('endpointsTab').classList.add('active');
+                    document.querySelector('.tab:nth-child(3)').classList.add('active');
+                }
+            }
+
+            // Load job history
+            async function loadJobHistory() {
+                const loadingDiv = document.getElementById('historyLoading');
+                const containerDiv = document.getElementById('historyContainer');
+                
+                loadingDiv.style.display = 'block';
+                containerDiv.innerHTML = '';
+                
+                try {
+                    const response = await fetch(`${API_BASE_URL}/api/jobs/history`, {
+                        headers: {
+                            'X-API-Key': getApiKey()
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const jobs = await response.json();
+                        displayJobHistory(jobs);
+                    } else {
+                        containerDiv.innerHTML = `<p style="color: #721c24;">Failed to load job history: ${response.status}</p>`;
+                    }
+                } catch (error) {
+                    containerDiv.innerHTML = `<p style="color: #721c24;">Error loading history: ${error.message}</p>`;
+                } finally {
+                    loadingDiv.style.display = 'none';
+                }
+            }
+
+            // Display job history in a table
+            function displayJobHistory(jobs) {
+                const container = document.getElementById('historyContainer');
+                
+                if (!jobs || jobs.length === 0) {
+                    container.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No job history found. Start a job to see it here!</p>';
+                    return;
+                }
+                
+                let tableHTML = `
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Job ID</th>
+                                <th>Created</th>
+                                <th>Status</th>
+                                <th>Progress</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                jobs.forEach(job => {
+                    const createdDate = new Date(job.createdAt || job.CreatedAt).toLocaleString();
+                    const status = job.status || job.Status || 'Unknown';
+                    const total = job.totalStations || job.TotalStations || 0;
+                    const processed = job.processedStations || job.ProcessedStations || 0;
+                    const jobId = job.partitionKey || job.PartitionKey;
+                    
+                    const statusClass = status.toLowerCase() === 'completed' ? 'status-completed' : 
+                                       status.toLowerCase() === 'inprogress' ? 'status-inprogress' : 
+                                       'status-failed';
+                    
+                    tableHTML += `
+                        <tr>
+                            <td><code>${jobId}</code></td>
+                            <td>${createdDate}</td>
+                            <td><span class="status-badge ${statusClass}">${status}</span></td>
+                            <td>${processed} / ${total}</td>
+                            <td><button class="view-job-btn" onclick="viewJobFromHistory('${jobId}')">View</button></td>
+                        </tr>
+                    `;
+                });
+                
+                tableHTML += `
+                        </tbody>
+                    </table>
+                `;
+                
+                container.innerHTML = tableHTML;
+            }
+
+            // View a job from history
+            function viewJobFromHistory(jobId) {
+                currentJobId = jobId;
+                switchTab('current');
+                checkJobStatus();
+                document.getElementById('checkStatusBtn').disabled = false;
+            }
         </script>
     </body>
 </html>
