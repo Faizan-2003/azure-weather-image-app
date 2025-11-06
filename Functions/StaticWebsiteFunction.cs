@@ -24,9 +24,17 @@ namespace AzureWeatherImageApp.Functions
 
         [Function("HomePage")]
         public async Task<HttpResponseData> HomePage(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "")] HttpRequestData req)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "/")] HttpRequestData req)
         {
-            _logger.LogInformation("Serving homepage");
+            _logger.LogInformation("Serving homepage at root");
+            return await ServeHtmlPage(req);
+        }
+        
+        [Function("Index")]
+        public async Task<HttpResponseData> Index(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "index")] HttpRequestData req)
+        {
+            _logger.LogInformation("Serving index page");
             return await ServeHtmlPage(req);
         }
 

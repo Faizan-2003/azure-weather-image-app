@@ -275,18 +275,28 @@ Generates a test image for debugging.
 ## 🌐 Live Deployment
 
 **Function App URL:** https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net  
-**Web Interface:** https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/ServeWebsite  
+**🎨 Web Interface (UI for Testing):** https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/ui  
 **Region:** Sweden Central  
 **Resource Group:** StudentGroup
 
-### Available Endpoints
+### 📋 Available API Endpoints
 
--   `GET /api/health` - Health check
--   `POST /api/job/start` - Start weather image generation job
--   `GET /api/job/{jobId}` - Check job status and get results
--   `GET /api/ServeWebsite` - Interactive web interface
+-   `GET /health` - Health check endpoint
+-   `POST /job/start` - Start weather image generation job
+-   `GET /job/{jobId}` - Check job status and get results
+-   `GET /ui` - Interactive web interface for testing
 
-All endpoints require `X-API-Key: test-api-key-12345` header.
+### 🔑 Authentication
+
+All API endpoints (except `/ui`) require `X-API-Key: test-api-key-12345` header.
+
+### 📦 Azure Resources
+
+-   **Storage Account:** stweathereg2kg4p2kzwtc
+-   **Queues:** job-start-queue, image-processing-queue
+-   **Blob Container:** weather-images (private with SAS tokens)
+-   **Table:** JobStatus
+-   **Application Insights:** Enabled for monitoring
 
 ## 📄 License
 

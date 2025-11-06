@@ -142,6 +142,10 @@ resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
           value: apiKey
         }
         {
+          name: 'AzureWebJobsDisableHomepage'
+          value: 'true'
+        }
+        {
           name: 'UnsplashAccessKey'
           value: unsplashAccessKey
         }
