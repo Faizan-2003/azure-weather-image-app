@@ -330,22 +330,153 @@
                 <div class="image-gallery" id="imageGallery"></div>
 
                 <div class="endpoint-info">
-                    <h3>📡 API Endpoints:</h3>
-                    <p>
-                        <strong>Base URL:</strong>
-                        <code id="baseUrl"
-                            >https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net</code
+                    <h3>📡 API Endpoints (Click to Test):</h3>
+                    <div
+                        style="
+                            margin: 15px 0;
+                            padding: 15px;
+                            background: #f8f9fa;
+                            border-radius: 8px;
+                            border-left: 4px solid #667eea;
+                        "
+                    >
+                        <p style="margin-bottom: 15px">
+                            <strong>🏥 Health Check:</strong><br />
+                            <code
+                                style="
+                                    background: white;
+                                    padding: 8px;
+                                    display: inline-block;
+                                    margin: 5px 0;
+                                    border-radius: 4px;
+                                "
+                                >GET /api/health</code
+                            ><br />
+                            <a
+                                href="https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/health"
+                                target="_blank"
+                                onclick="return testEndpoint(event, '/api/health', 'GET')"
+                                style="
+                                    color: #667eea;
+                                    text-decoration: none;
+                                    font-weight: bold;
+                                    display: inline-block;
+                                    margin-top: 5px;
+                                "
+                            >
+                                🔗
+                                https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/health
+                            </a>
+                            <span style="color: #28a745; margin-left: 10px"
+                                >✓ No API key needed in browser</span
+                            >
+                        </p>
+
+                        <p style="margin-bottom: 15px">
+                            <strong>🚀 Start Job:</strong><br />
+                            <code
+                                style="
+                                    background: white;
+                                    padding: 8px;
+                                    display: inline-block;
+                                    margin: 5px 0;
+                                    border-radius: 4px;
+                                "
+                                >POST /api/job/start</code
+                            ><br />
+                            <button
+                                onclick="startJob()"
+                                style="
+                                    background: #667eea;
+                                    color: white;
+                                    border: none;
+                                    padding: 8px 16px;
+                                    border-radius: 4px;
+                                    cursor: pointer;
+                                    font-weight: bold;
+                                    margin-top: 5px;
+                                "
+                            >
+                                🖱️ Click Here to Start Job
+                            </button>
+                            <span
+                                style="
+                                    color: #ffc107;
+                                    margin-left: 10px;
+                                    font-size: 0.9em;
+                                "
+                                >⚠️ POST requests need button click</span
+                            >
+                        </p>
+
+                        <p style="margin-bottom: 15px">
+                            <strong>📊 Check Job Status:</strong><br />
+                            <code
+                                style="
+                                    background: white;
+                                    padding: 8px;
+                                    display: inline-block;
+                                    margin: 5px 0;
+                                    border-radius: 4px;
+                                "
+                                >GET /api/job/{jobId}</code
+                            ><br />
+                            <span
+                                id="statusEndpointLink"
+                                style="color: #999; font-style: italic"
+                            >
+                                Start a job first to get the Job ID
+                            </span>
+                        </p>
+
+                        <p style="margin-bottom: 15px">
+                            <strong>🎨 Web Interface:</strong><br />
+                            <code
+                                style="
+                                    background: white;
+                                    padding: 8px;
+                                    display: inline-block;
+                                    margin: 5px 0;
+                                    border-radius: 4px;
+                                "
+                                >GET /api/ServeWebsite</code
+                            ><br />
+                            <a
+                                href="https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/ServeWebsite"
+                                target="_blank"
+                                style="
+                                    color: #667eea;
+                                    text-decoration: none;
+                                    font-weight: bold;
+                                    display: inline-block;
+                                    margin-top: 5px;
+                                "
+                            >
+                                🔗
+                                https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/ServeWebsite
+                            </a>
+                            <span style="color: #28a745; margin-left: 10px"
+                                >✓ This page!</span
+                            >
+                        </p>
+
+                        <p
+                            style="
+                                margin: 15px 0 0 0;
+                                padding: 10px;
+                                background: white;
+                                border-radius: 4px;
+                                font-size: 0.9em;
+                            "
                         >
-                    </p>
-                    <p><strong>Health:</strong> <code>GET /health</code></p>
-                    <p>
-                        <strong>Start Job:</strong>
-                        <code>POST /job/start</code>
-                    </p>
-                    <p>
-                        <strong>Check Status:</strong>
-                        <code>GET /job/{jobId}</code>
-                    </p>
+                            <strong>💡 For Teachers:</strong> All green-marked
+                            links are clickable and work directly in your
+                            browser! The Health Check and Web Interface
+                            endpoints can be tested by simply clicking the
+                            links. For the Start Job endpoint, use the button
+                            above to trigger the POST request.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -372,6 +503,19 @@
             function hideStatus() {
                 const statusBox = document.getElementById("statusBox");
                 statusBox.className = "status-box";
+            }
+
+            function testEndpoint(event, path, method) {
+                // For GET requests, let the browser handle it normally
+                if (method === "GET") {
+                    return true; // Allow default link behavior
+                }
+                // For POST, prevent default and use our function
+                event.preventDefault();
+                if (path.includes("/job/start")) {
+                    startJob();
+                }
+                return false;
             }
 
             async function testHealth() {
@@ -428,6 +572,20 @@
                             `✅ Job Started Successfully!<br><strong>Job ID:</strong> ${data.jobId}<br><strong>Status:</strong> ${data.status}`,
                             "success"
                         );
+
+                        // Update the status endpoint link with the actual job ID
+                        const statusUrl = `${API_BASE_URL}/api/job/${data.jobId}`;
+                        document.getElementById(
+                            "statusEndpointLink"
+                        ).innerHTML = `
+                            <a href="${statusUrl}" 
+                               target="_blank" 
+                               onclick="checkJobStatus(); return false;"
+                               style="color: #667eea; text-decoration: none; font-weight: bold;">
+                                🔗 ${statusUrl}
+                            </a>
+                            <span style="color: #28a745; margin-left: 10px;">✓ Click to check status</span>
+                        `;
 
                         document.getElementById(
                             "checkStatusBtn"
