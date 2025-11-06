@@ -665,6 +665,7 @@
 
                 // Update status message
                 let statusMessage = `
+                <strong>🆔 Job ID:</strong> ${jobId}<br>
                 <strong>📊 Job Status:</strong> ${status}<br>
                 <strong>🎯 Progress:</strong> ${processedStations} / ${totalStations} stations<br>
                 <strong>❌ Failed:</strong> ${failedStations || 0}
@@ -673,13 +674,13 @@
                 if (status === "Completed") {
                     showStatus(
                         statusMessage +
-                            "<br>✅ <strong>Job Completed Successfully!</strong>",
+                            "<br> <strong>Job Completed Successfully!</strong>",
                         "success"
                     );
                     stopStatusPolling();
                 } else if (status === "Failed") {
                     showStatus(
-                        statusMessage + "<br>❌ <strong>Job Failed!</strong>",
+                        statusMessage + "<br> <strong>Job Failed!</strong>",
                         "error"
                     );
                     stopStatusPolling();
