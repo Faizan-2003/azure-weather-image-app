@@ -25,26 +25,30 @@ public class ApiKeyAuthMiddleware : IFunctionsWorkerMiddleware
         
         if (requestData != null)
         {
-            // Check if the function has the ApiKeyAuth attribute
+            // Check if the function should skip authentication (web interface functions)
             var targetMethod = context.FunctionDefinition.Name;
+            var skipAuth = targetMethod == "ServeWebsite" || targetMethod == "HomePage";
             
-            // Get API key from configuration
-            var expectedApiKey = _configuration["ApiKey"];
-            
-            if (!string.IsNullOrEmpty(expectedApiKey))
+            if (!skipAuth)
             {
-                // Get API key from header
-                var providedApiKey = requestData.Headers.TryGetValues("X-API-Key", out var values) 
-                    ? values.FirstOrDefault() 
-                    : null;
-
-                if (string.IsNullOrEmpty(providedApiKey) || providedApiKey != expectedApiKey)
+                // Get API key from configuration
+                var expectedApiKey = _configuration["ApiKey"];
+                
+                if (!string.IsNullOrEmpty(expectedApiKey))
                 {
-                    var response = requestData.CreateResponse(HttpStatusCode.Unauthorized);
-                    await response.WriteStringAsync("Unauthorized: Invalid or missing API key");
-                    
-                    context.GetInvocationResult().Value = response;
-                    return;
+                    // Get API key from header
+                    var providedApiKey = requestData.Headers.TryGetValues("X-API-Key", out var values) 
+                        ? values.FirstOrDefault() 
+                        : null;
+
+                    if (string.IsNullOrEmpty(providedApiKey) || providedApiKey != expectedApiKey)
+                    {
+                        var response = requestData.CreateResponse(HttpStatusCode.Unauthorized);
+                        await response.WriteStringAsync("Unauthorized: Invalid or missing API key");
+                        
+                        context.GetInvocationResult().Value = response;
+                        return;
+                    }
                 }
             }
         }
