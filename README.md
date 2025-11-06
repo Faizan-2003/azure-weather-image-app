@@ -275,7 +275,7 @@ Generates a test image for debugging.
 ## 🌐 Live Deployment
 
 **🎨 INTERACTIVE WEB UI (For Your Teacher):**  
-👉 **https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/** 👈
+👉 **https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/ServeWebsite** 👈
 
 **Open this link in Chrome - No API key needed! Test everything with buttons and see real-time results!**
 
@@ -309,21 +309,21 @@ All API endpoints require `X-API-Key: test-api-key-12345` header.
 
 **Available Endpoints:**
 
--   `GET /health` - Health check endpoint
--   `POST /job/start` - Start weather image generation job
--   `GET /job/{jobId}` - Check job status and get results
+-   `GET /api/health` - Health check endpoint
+-   `POST /api/job/start` - Start weather image generation job
+-   `GET /api/job/{jobId}` - Check job status and get results
 
 **Example using curl:**
 
 ```bash
 # Health Check
-curl -H "X-API-Key: test-api-key-12345" https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/health
+curl -H "X-API-Key: test-api-key-12345" https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/health
 
 # Start Job
-curl -X POST -H "X-API-Key: test-api-key-12345" -H "Content-Type: application/json" https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/job/start
+curl -X POST -H "X-API-Key: test-api-key-12345" -H "Content-Type: application/json" https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/job/start
 
 # Check Status
-curl -H "X-API-Key: test-api-key-12345" https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/job/{jobId}
+curl -H "X-API-Key: test-api-key-12345" https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/job/{jobId}
 ```
 
 ### 📦 Azure Resources
