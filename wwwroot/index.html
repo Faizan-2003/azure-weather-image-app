@@ -441,6 +441,10 @@
                 </div>
 
                 <div class="job-status" id="jobStatus"></div>
+                
+                <div id="statusEndpointLink" style="margin: 15px 0; color: #999; font-style: italic;">
+                    Start a job first to get the Job ID
+                </div>
 
                 <div class="image-gallery" id="imageGallery"></div>
 
@@ -449,7 +453,7 @@
 
                 <!-- History Tab -->
                 <div id="historyTab" class="tab-content">
-                    <h2 style="margin-bottom: 15px;">📜 Job History</h2>
+                    <h2 style="margin-bottom: 15px;"> Job History</h2>
                     <button class="btn-info" onclick="loadJobHistory()" style="margin-bottom: 15px;">
                         Refresh History
                     </button>
@@ -575,7 +579,7 @@
                                     margin-top: 5px;
                                 "
                             >
-                                🔗
+                                
                                 https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/ServeWebsite
                             </a>
                             <span style="color: #28a745; margin-left: 10px"
@@ -688,17 +692,31 @@
 
                         // Update the status endpoint link with the actual job ID
                         const statusUrl = `${API_BASE_URL}/api/job/${jobId}`;
-                        document.getElementById(
-                            "statusEndpointLink"
-                        ).innerHTML = `
-                            <a href="${statusUrl}" 
-                               target="_blank" 
-                               onclick="checkJobStatus(); return false;"
-                               style="color: #667eea; text-decoration: none; font-weight: bold;">
-                                 ${statusUrl}
-                            </a>
-                            <span style="color: #28a745; margin-left: 10px;">Click to check status</span>
-                        `;
+                        const statusLink = document.getElementById("statusEndpointLink");
+                        if (statusLink) {
+                            statusLink.innerHTML = `
+                                <a href="${statusUrl}" 
+                                   target="_blank" 
+                                   onclick="checkJobStatus(); return false;"
+                                   style="color: #667eea; text-decoration: none; font-weight: bold;">
+                                     ${statusUrl}
+                                </a>
+                                <span style="color: #28a745; margin-left: 10px;">Click to check status</span>
+                            `;
+                        }
+                        
+                        // Also update in endpoints tab if it exists
+                        const statusLink2 = document.getElementById("statusEndpointLink2");
+                        if (statusLink2) {
+                            statusLink2.innerHTML = `
+                                <a href="${statusUrl}" 
+                                   target="_blank" 
+                                   onclick="checkJobStatus(); return false;"
+                                   style="color: #667eea; text-decoration: none; font-weight: bold;">
+                                     ${statusUrl}
+                                </a>
+                            `;
+                        }
 
                         document.getElementById(
                             "checkStatusBtn"
