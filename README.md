@@ -40,34 +40,72 @@ The app includes a web-based interface for testing and real-time progress tracki
 Web Interface:
 https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/ServeWebsite
 
-API Key: test-api-key-12345 (use as X-API-Key header)
+API Key: test-api-key-12345
+
+**Authentication Methods:**
+
+-   Header: `X-API-Key: test-api-key-12345`
+-   Query Parameter: `?apiKey=test-api-key-12345`
 
 Quick Test:
-Click “Start Weather Job” - all configuration is preloaded.
+Click "Start Weather Job" - all configuration is preloaded.
 
 **API Endpoints**
 
--   /api/HealthCheck - GET
--   /api/ServeWebsite - GET
--   /api/StartJob - POST
--   /api/GetJobStatus?jobId={id} - GET
--   /api/test/image - GET
+Public (No Auth):
+
+-   `GET /api/health` - Health check
+-   `GET /api/ServeWebsite` - Web UI
+
+Protected (Requires API Key):
+
+-   `POST /api/StartJob` - Start new weather job
+-   `GET /api/job/{jobId}` - Get job status and images
+-   `GET /api/jobs/history` - Get all jobs history
+-   `GET /api/test/image` - Test image generation
 
 ---
 
 ## Quick Start
 
-Using cURL
+**Using Web UI (Easiest):**
 
+```
+https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/ServeWebsite
+```
+
+**Using cURL with Header:**
+
+```bash
 # Start job
-
 curl -X POST -H "X-API-Key: test-api-key-12345" \
-https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/StartJob
+  https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/StartJob
 
 # Check job status
-
 curl -H "X-API-Key: test-api-key-12345" \
-"https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/GetJobStatus?jobId={jobId}"
+  "https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/job/{jobId}"
+
+# Get job history
+curl -H "X-API-Key: test-api-key-12345" \
+  "https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/jobs/history"
+```
+
+**Using Browser with Query Parameter:**
+
+```
+# Get job history (works in browser!)
+https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/jobs/history?apiKey=test-api-key-12345
+
+# Get job status (replace YOUR-JOB-ID)
+https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/job/YOUR-JOB-ID?apiKey=test-api-key-12345
+```
+
+**Using PowerShell:**
+
+```powershell
+# Start job with query parameter
+Invoke-RestMethod -Uri "https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/StartJob?apiKey=test-api-key-12345" -Method POST
+```
 
 ---
 

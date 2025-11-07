@@ -466,125 +466,114 @@
                 <!-- Endpoints Tab -->
                 <div id="endpointsTab" class="tab-content">
                 <div class="endpoint-info">
-                    <h3>API Endpoints (Click to Test):</h3>
-                    <div
-                        style="
-                            margin: 15px 0;
-                            padding: 15px;
-                            background: #f8f9fa;
-                            border-radius: 8px;
-                            border-left: 4px solid #667eea;
-                        "
-                    >
+                    <h3>🔌 API Endpoints Documentation</h3>
+                    
+                    <!-- Authentication Info -->
+                    <div style="margin: 20px 0; padding: 15px; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
+                        <h4 style="margin-top: 0; color: #856404;">🔑 Authentication</h4>
+                        <p style="margin: 5px 0;"><strong>Method 1 - Header (Recommended):</strong></p>
+                        <code style="background: white; padding: 8px; display: block; margin: 5px 0; border-radius: 4px;">X-API-Key: test-api-key-12345</code>
+                        
+                        <p style="margin: 10px 0 5px 0;"><strong>Method 2 - Query Parameter (Browser-friendly):</strong></p>
+                        <code style="background: white; padding: 8px; display: block; margin: 5px 0; border-radius: 4px;">?apiKey=test-api-key-12345</code>
+                    </div>
+
+                    <!-- Public Endpoints -->
+                    <div style="margin: 20px 0; padding: 15px; background: #d4edda; border-radius: 8px; border-left: 4px solid #28a745;">
+                        <h4 style="margin-top: 0; color: #155724;">✅ Public Endpoints (No Auth Required)</h4>
+                        
                         <p style="margin-bottom: 15px">
-                            <strong>Health Check:</strong><br />
-                            <code
-                                style="
-                                    background: white;
-                                    padding: 8px;
-                                    display: inline-block;
-                                    margin: 5px 0;
-                                    border-radius: 4px;
-                                "
-                                >GET /api/health</code
-                            ><br />
-                            <a
-                                href="https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/health"
-                                target="_blank"
-                                onclick="return testEndpoint(event, '/api/health', 'GET')"
-                                style="
-                                    color: #667eea;
-                                    text-decoration: none;
-                                    font-weight: bold;
-                                    display: inline-block;
-                                    margin-top: 5px;
-                                "
-                            >
-                                https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/health
+                            <strong>1. Health Check</strong><br />
+                            <code style="background: white; padding: 8px; display: inline-block; margin: 5px 0; border-radius: 4px;">GET /api/health</code><br />
+                            <a href="https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/health" target="_blank" 
+                               style="color: #28a745; text-decoration: none; font-weight: bold; display: inline-block; margin-top: 5px;">
+                                🔗 Test in Browser
                             </a>
-                            <span style="color: #28a745; margin-left: 10px"
-                                >No API key needed in browser</span
-                            >
+                            <span style="color: #666; margin-left: 10px; font-size: 0.9em;">Returns: Server status</span>
                         </p>
 
                         <p style="margin-bottom: 15px">
-                            <strong> Start Job:</strong><br />
-                            <code
-                                style="
-                                    background: white;
-                                    padding: 8px;
-                                    display: inline-block;
-                                    margin: 5px 0;
-                                    border-radius: 4px;
-                                "
-                                >POST /api/job/start</code
-                            ><br />
-                            <button
-                                onclick="startJob()"
-                                style="
-                                    background: #667eea;
-                                    color: white;
-                                    border: none;
-                                    padding: 8px 16px;
-                                    border-radius: 4px;
-                                    cursor: pointer;
-                                    font-weight: bold;
-                                    margin-top: 5px;
-                                "
-                            >
-                                Click Here to Start Job
+                            <strong>2. Web Interface (This Page)</strong><br />
+                            <code style="background: white; padding: 8px; display: inline-block; margin: 5px 0; border-radius: 4px;">GET /api/ServeWebsite</code><br />
+                            <a href="https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/ServeWebsite" target="_blank"
+                               style="color: #28a745; text-decoration: none; font-weight: bold; display: inline-block; margin-top: 5px;">
+                                🔗 Open Web UI
+                            </a>
+                            <span style="color: #666; margin-left: 10px; font-size: 0.9em;">Returns: Interactive UI</span>
+                        </p>
+                    </div>
+
+                    <!-- Protected Endpoints -->
+                    <div style="margin: 20px 0; padding: 15px; background: #d1ecf1; border-radius: 8px; border-left: 4px solid #0c5460;">
+                        <h4 style="margin-top: 0; color: #0c5460;">🔒 Protected Endpoints (Auth Required)</h4>
+                        
+                        <p style="margin-bottom: 15px">
+                            <strong>3. Start Weather Job</strong><br />
+                            <code style="background: white; padding: 8px; display: inline-block; margin: 5px 0; border-radius: 4px;">POST /api/StartJob</code><br />
+                            <button onclick="startJob()" style="background: #17a2b8; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 5px;">
+                                ▶️ Start New Job
                             </button>
+                            <span style="color: #666; margin-left: 10px; font-size: 0.9em;">Returns: Job ID and status</span><br />
+                            <small style="color: #666; display: block; margin-top: 5px;">⚠️ Requires POST request (use button or API client)</small>
                         </p>
 
                         <p style="margin-bottom: 15px">
-                            <strong>Check Job Status:</strong><br />
-                            <code
-                                style="
-                                    background: white;
-                                    padding: 8px;
-                                    display: inline-block;
-                                    margin: 5px 0;
-                                    border-radius: 4px;
-                                "
-                                >GET /api/job/{jobId}</code
-                            ><br />
-                            <span
-                                id="statusEndpointLink2"
-                                style="color: #999; font-style: italic"
-                            >
-                                Start a job first to get the Job ID
-                            </span>
+                            <strong>4. Get Job Status</strong><br />
+                            <code style="background: white; padding: 8px; display: inline-block; margin: 5px 0; border-radius: 4px;">GET /api/job/{jobId}</code><br />
+                            <span id="statusEndpointLink2" style="color: #999; font-style: italic;">Start a job first to get the Job ID</span><br />
+                            <small style="color: #666; display: block; margin-top: 5px;">Returns: Job progress, status, and image URLs with SAS tokens</small>
                         </p>
 
                         <p style="margin-bottom: 15px">
-                            <strong>Web Interface:</strong><br />
-                            <code
-                                style="
-                                    background: white;
-                                    padding: 8px;
-                                    display: inline-block;
-                                    margin: 5px 0;
-                                    border-radius: 4px;
-                                "
-                                >GET /api/ServeWebsite</code
-                            ><br />
-                            <a
-                                href="https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/ServeWebsite"
-                                target="_blank"
-                                style="
-                                    color: #667eea;
-                                    text-decoration: none;
-                                    font-weight: bold;
-                                    display: inline-block;
-                                    margin-top: 5px;
-                                "
-                            >
-                                
-                                https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/ServeWebsite
+                            <strong>5. Get Job History</strong><br />
+                            <code style="background: white; padding: 8px; display: inline-block; margin: 5px 0; border-radius: 4px;">GET /api/jobs/history</code><br />
+                            <a href="https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/jobs/history?apiKey=test-api-key-12345" target="_blank"
+                               style="color: #17a2b8; text-decoration: none; font-weight: bold; display: inline-block; margin-top: 5px;">
+                                🔗 View in Browser (with API key)
                             </a>
-                            <span style="color: #28a745; margin-left: 10px"
-                                >This page!</span
-                            >
+                            <span style="color: #666; margin-left: 10px; font-size: 0.9em;">Returns: All jobs history</span>
+                        </p>
+
+                        <p style="margin-bottom: 15px">
+                            <strong>6. Test Image Generation</strong><br />
+                            <code style="background: white; padding: 8px; display: inline-block; margin: 5px 0; border-radius: 4px;">GET /api/test/image</code><br />
+                            <a href="https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/test/image?apiKey=test-api-key-12345" target="_blank"
+                               style="color: #17a2b8; text-decoration: none; font-weight: bold; display: inline-block; margin-top: 5px;">
+                                🔗 Generate Test Image
+                            </a>
+                            <span style="color: #666; margin-left: 10px; font-size: 0.9em;">Returns: Weather image (PNG)</span>
+                        </p>
+                    </div>
+
+                    <!-- Usage Examples -->
+                    <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #667eea;">
+                        <h4 style="margin-top: 0; color: #667eea;">💡 Usage Examples</h4>
+                        
+                        <p><strong>cURL (Header-based):</strong></p>
+                        <pre style="background: white; padding: 12px; border-radius: 4px; overflow-x: auto; font-size: 0.85em;">curl -X POST -H "X-API-Key: test-api-key-12345" \
+  https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/StartJob</pre>
+
+                        <p style="margin-top: 15px;"><strong>PowerShell (Query parameter):</strong></p>
+                        <pre style="background: white; padding: 12px; border-radius: 4px; overflow-x: auto; font-size: 0.85em;">Invoke-RestMethod -Uri "https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/StartJob?apiKey=test-api-key-12345" -Method POST</pre>
+
+                        <p style="margin-top: 15px;"><strong>Browser (GET endpoints only):</strong></p>
+                        <pre style="background: white; padding: 12px; border-radius: 4px; overflow-x: auto; font-size: 0.85em;">https://weather-image-func-eg2kg4p2kzwtc.azurewebsites.net/api/jobs/history?apiKey=test-api-key-12345</pre>
+                    </div>
+
+                    <!-- Architecture Info -->
+                    <div style="margin: 20px 0; padding: 15px; background: #e7e7e7; border-radius: 8px; border-left: 4px solid #6c757d;">
+                        <h4 style="margin-top: 0; color: #495057;">🏗️ Processing Flow</h4>
+                        <ol style="margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+                            <li><strong>POST /api/StartJob</strong> → Creates job in Table Storage</li>
+                            <li>Sends message to <code>job-start-queue</code></li>
+                            <li><strong>JobInitiator</strong> (Queue Trigger) → Fetches 50 weather stations</li>
+                            <li>Sends 50 messages to <code>image-processing-queue</code></li>
+                            <li><strong>ProcessImage</strong> (Queue Trigger × 50) → Generates images in parallel</li>
+                            <li>Each image uploaded to <strong>Blob Storage</strong> with SAS token</li>
+                            <li>Progress tracked in <strong>Table Storage</strong></li>
+                            <li><strong>GET /api/job/{id}</strong> → Returns status and image URLs</li>
+                        </ol>
+                    </div>
             </div>
         </div>
 
