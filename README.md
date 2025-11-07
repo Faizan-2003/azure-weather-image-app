@@ -129,24 +129,14 @@ npx azurite --silent --location ./azurite
 # Terminal 2: Build and start the Functions app
 
 dotnet restore
+
 dotnet build
+
 ./start.ps1
 
 # Terminal 3: Run the test
 
 ./test-local.ps1
-
----
-
-## Deployment
-
-**Option 1: GitHub Actions (CI/CD)**
-
-Push to main → GitHub Actions automatically deploys via .github/workflows/azure-deploy.yml.
-
-**Option 2: Manual (PowerShell)**
-
-.\deploy.ps1 -ResourceGroupName "rg-weather" -Location "swedencentral" -ApiKey "your-api-key"
 
 ---
 
